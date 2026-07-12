@@ -36,6 +36,13 @@ function cardTiltTransform(rx: number, ry: number, scale = 1) {
   return `rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale}) translate3d(0, 0, 0.01px)`;
 }
 
+function cardNameSizeClass(name: string) {
+  if (name.length > 12) return "card-princess-name card-princess-name--xlong";
+  if (name.length > 9) return "card-princess-name card-princess-name--long";
+  if (name.length > 7) return "card-princess-name card-princess-name--medium";
+  return "card-princess-name";
+}
+
 interface RC {
   name: string;
   tier: string;
@@ -402,8 +409,6 @@ function CardSVG({ rarity, portrait, princessName }: {
   const imgX = 20, imgY = 80, imgW = 310, imgH = 330;
   const bpY = imgY + imgH + 6;
   const bpH = Math.max(H - fw - 4 - bpY, 36);
-  const nameFontSize = princessName.length > 12 ? 11 : princessName.length > 9 ? 12 : princessName.length > 7 ? 13 : 15;
-  const nameLetterSpacing = princessName.length > 12 ? 1 : princessName.length > 9 ? 1.5 : 2.5;
 
   const particles = useMemo(() => {
     const pts: Array<{ x: number; y: number; r: number; op: number }> = [];
@@ -557,8 +562,9 @@ function CardSVG({ rarity, portrait, princessName }: {
       {/* Princess name */}
       <text x={175} y={fw + 30}
         textAnchor="middle" dominantBaseline="middle"
-        fontSize={nameFontSize} fontWeight="700"
-        fill={c.goldHigh} letterSpacing={nameLetterSpacing} opacity="0.95"
+        className={cardNameSizeClass(princessName)}
+        fontWeight="700"
+        fill={c.goldHigh} opacity="0.95"
         style={{ fontFamily: "var(--font-ui)" }}>
         {princessName.toUpperCase()}
       </text>
@@ -754,7 +760,7 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
         <div className="flex items-center gap-1.5">
           <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
             style={{ background: cfg.color, boxShadow: `0 0 5px ${cfg.color}` }} />
-          <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.18em] uppercase"
+          <span className="text-[9px] sm:text-[10px] lg:text-[14px] font-bold tracking-[0.18em] uppercase"
             style={{ color: cfg.color, fontFamily: "var(--font-label-en)" }}>
             {cfg.name}
           </span>
@@ -887,7 +893,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
             {/* Close button */}
             <button
               onClick={onClose}
-              className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-colors"
+              className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer hover:bg-[rgba(212,175,55,0.18)] hover:border-[rgba(212,175,55,0.45)]"
               style={{ border: "1px solid rgba(212,175,55,0.25)", background: "rgba(212,175,55,0.08)", color: "#D4AF37" }}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -917,8 +923,8 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl p-4" style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.15)" }}>
               <p className="text-[9px] tracking-[0.24em] uppercase mb-2 font-semibold" style={{ color: "#8494BC" }}>Бустер-пак</p>
-              <div className="flex items-center gap-2">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="flex-shrink-0">
+              <div className="flex items-start gap-2">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="flex-shrink-0 mt-0.5">
                   <rect x="1" y="3" width="12" height="9" rx="1.5" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M4 3V2a3 3 0 016 0v1" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                   <path d="M5 7h4M7 5v4" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
@@ -931,8 +937,8 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
 
             <div className="rounded-xl p-4" style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.15)" }}>
               <p className="text-[9px] tracking-[0.24em] uppercase mb-2 font-semibold" style={{ color: "#8494BC" }}>Дата получения</p>
-              <div className="flex items-center gap-2">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="flex-shrink-0">
+              <div className="flex items-start gap-2">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="flex-shrink-0 mt-0.5">
                   <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M1 6h12" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M4 1v3M10 1v3" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
@@ -1059,6 +1065,16 @@ export default function App() {
         .card-svg {
           display: block;
           shape-rendering: geometricPrecision;
+        }
+        .card-princess-name { font-size: 15px; letter-spacing: 0.16em; }
+        .card-princess-name--medium { font-size: 13px; letter-spacing: 0.12em; }
+        .card-princess-name--long { font-size: 12px; letter-spacing: 0.1em; }
+        .card-princess-name--xlong { font-size: 11px; letter-spacing: 0.06em; }
+        @media (min-width: 1024px) {
+          .card-princess-name { font-size: 16px; letter-spacing: 0.14em; }
+          .card-princess-name--medium { font-size: 15px; letter-spacing: 0.12em; }
+          .card-princess-name--long { font-size: 14px; letter-spacing: 0.1em; }
+          .card-princess-name--xlong { font-size: 13px; letter-spacing: 0.08em; }
         }
         .card-modal-tilt-scene {
           overflow: visible;
