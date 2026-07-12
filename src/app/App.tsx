@@ -1,8 +1,8 @@
 import { useMemo, useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import portraitImg from "@/imports/20260712_062815_flux_Portrait_of_Flounder_from_The_L_ComfyUI_00118_.png";
-import elsaImg from "@/imports/20260712_065927_flux_Portrait_of_Elsa_from_Frozen__c_ComfyUI_00119_.png";
-import auroraImg from "@/imports/editing_result_e6345ab87d3f11f1a0a5cefd6ad41579_1.jpg";
+import flounderImg from "@/imports/flounder.webp";
+import queenElsaImg from "@/imports/queen-elsa.webp";
+import auroraImg from "@/imports/aurora.webp";
 import megaraImg from "@/imports/megara.webp";
 import belleImg from "@/imports/belle.webp";
 import arielImg from "@/imports/ariel.webp";
@@ -25,6 +25,8 @@ import tinkerBellImg from "@/imports/tinker-bell.webp";
 import giselleImg from "@/imports/giselle.webp";
 import kidaImg from "@/imports/kida.webp";
 import annaImg from "@/imports/anna.webp";
+import olafImg from "@/imports/olaf.webp";
+import pascalImg from "@/imports/pascal.webp";
 
 type RarityKey = "common" | "uncommon" | "rare" | "epic" | "legendary" | "secretRare";
 
@@ -119,7 +121,7 @@ interface CardDef {
   portrait?: string;
 }
 
-// 24 карты — редкости перемешаны для естественного распределения
+// 27 карт — редкости перемешаны для естественного распределения
 const CARDS: CardDef[] = [
   { princess: "Золушка",       rarity: "common",     portrait: cinderellaImg },
   { princess: "Белль",         rarity: "uncommon",   portrait: belleImg },
@@ -137,7 +139,7 @@ const CARDS: CardDef[] = [
   { princess: "Мулан",         rarity: "uncommon",   portrait: mulanImg },
   { princess: "Анна",          rarity: "rare",       portrait: annaImg },
   { princess: "Нала",          rarity: "common",     portrait: nalaImg },
-  { princess: "Королева Эльза", rarity: "secretRare", portrait: elsaImg },
+  { princess: "Королева Эльза", rarity: "secretRare", portrait: queenElsaImg },
   { princess: "Мегара",        rarity: "secretRare", portrait: megaraImg },
   { princess: "Эсмеральда",    rarity: "rare",       portrait: esmeraldaImg },
   { princess: "Джейн",         rarity: "common",     portrait: janeImg },
@@ -145,6 +147,9 @@ const CARDS: CardDef[] = [
   { princess: "Динь-Динь",     rarity: "uncommon",   portrait: tinkerBellImg },
   { princess: "Кида",          rarity: "rare",       portrait: kidaImg },
   { princess: "Жизель",        rarity: "uncommon",   portrait: giselleImg },
+  { princess: "Флаундер",      rarity: "common",     portrait: flounderImg },
+  { princess: "Олаф",          rarity: "common",     portrait: olafImg },
+  { princess: "Паскаль",       rarity: "common",     portrait: pascalImg },
 ];
 
 interface CardDetails {
@@ -153,126 +158,144 @@ interface CardDetails {
   obtainedDate: string;
 }
 
+const FIRST_EDITION_BOOSTER = "Серия «Фантастический коллекционер» · Тираж № 001";
+const COLLECTION_START_DATE = "12 июля 2026";
+
 const CARD_DETAILS: Record<string, CardDetails> = {
   "Золушка": {
     story: "Добрая девушка, чьё терпение и благородство открыли ей дорогу ко двору. Годы тяжёлой работы не смогли остудить её сердце — и одна хрустальная туфелька доказала, что истинное величие живёт в душе, а не в родословной.",
-    booster: "Набор «Королевское пробуждение»",
-    obtainedDate: "14 февраля 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Белль": {
     story: "Книжная мечтательница, увидевшая красоту там, где другие видели лишь чудовище. Её смелость и сострадание разрушили древнее проклятие, превратив проклятый замок в дом, наполненный светом, — и научили всё королевство, что любовь смотрит глубже, чем на лицо.",
-    booster: "Набор «Зачарованный лес»",
-    obtainedDate: "3 марта 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Ариэль": {
     story: "Русалочка, которая отдала голос ради ног и поняла: самые великие приключения начинаются, когда следуешь зову сердца. Она соединила два мира — океан и сушу — и доказала, что мечты стоят любой жертвы.",
-    booster: "Коллекция «Мистические приливы»",
-    obtainedDate: "20 января 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Белоснежка": {
     story: "Самая прекрасная из всех, чей нежный дух пережил тёмное колдовство, отравленное яблоко и зависть злой королевы. Она проснулась в королевстве, преображённом её добротой и любовью, которую внушала всем, кто её знал.",
-    booster: "Набор «Золотое наследие»",
-    obtainedDate: "7 апреля 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Рапунцель": {
     story: "Восемнадцать лет запертая в башне, она несла мечту внутри себя, словно пламя фонарика. Когда наконец вышла в мир, осветила всё вокруг — и поняла, что корона, которую искала, всегда принадлежала ей.",
-    booster: "Набор «Лунные грёзы»",
-    obtainedDate: "21 марта 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Жасмин": {
     story: "Принцесса, отказавшаяся быть наградой или политической сделкой. Переодевшись, она бродила по улицам Аграбы, искала правду вместо комфорта и выбрала собственную судьбу — доказав, что свободный дух нельзя запереть за дворцовыми стенами.",
-    booster: "Набор «Хрустальное королевство»",
-    obtainedDate: "28 февраля 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Моана": {
     story: "Избранная самим океаном, она пересекла открытое море, чтобы вернуть сердце Те Фити и спасти свой остров. Её путь — не только по звёздам и волнам, но и к себе: она нашла, кто она есть, лишь отплыв за горизонт.",
-    booster: "Коллекция «Мистические приливы»",
-    obtainedDate: "11 мая 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Покахонтас": {
     story: "Дочь ветра и реки, которая слушала, когда другие лишь сражались. Её голос соединил две цивилизации на грани войны — и её смелость изменила ход истории одной лишь правдой.",
-    booster: "Набор «Зачарованный лес»",
-    obtainedDate: "5 января 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Аврора": {
     story: "Проклятая при рождении, но наделённая неувядаемой грацией, она проспала судьбу и проснулась, когда мир уже ждал её. Принцесса и диких лесов, и королевских залов — олицетворение магии между сном и пробуждением.",
-    booster: "Коллекция «Падение звёзд»",
-    obtainedDate: "1 июня 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Тиана": {
     story: "Самая трудолюбивая женщина Нового Орлеана: её мечты сбылись не только благодаря магии, но и упорству, жертве и любви. Она превратила поцелуй в ресторан, а желание — в наследие, по одному бенье за раз.",
-    booster: "Набор «Золотое наследие»",
-    obtainedDate: "15 марта 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Мерида": {
     story: "Единственная принцесса, сражающаяся за собственную судьбу — с луком, стрелами и волей, которую не сломить. Её стрела полетела не к жениху, а к свободе, и она сняла вековое проклятие материнской любовью и дочерней смелостью.",
-    booster: "Набор «Зачарованный лес»",
-    obtainedDate: "19 апреля 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Аша": {
     story: "Юная мечтательница, чьё желание было настолько чистым, что коснулось космоса. Она призвала звёздного стража и поняла: величайшая магия не даруется королями — она живёт в мечтах простых людей, осмелившихся верить.",
-    booster: "Коллекция «Падение звёзд»",
-    obtainedDate: "2 февраля 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Рая": {
     story: "Последняя хранительница драконов Кумандры, которая поняла: доверие — редчайшая магия в разрушенном мире. Когда она наконец прыгнула в веру — буквально — она склеила то, что разрушила ненависть, и вернула драконов в небо.",
-    booster: "Набор «Хрустальное королевство»",
-    obtainedDate: "30 мая 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Мулан": {
     story: "Она отправилась на войну в доспехах отца и вернулась героиней, спасшей империю. В мире, где ей велели молчать, она говорила поступками — и доказала, что честь не зависит от имени, пола или ожиданий.",
-    booster: "Набор «Королевское пробуждение»",
-    obtainedDate: "8 марта 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Анна": {
     story: "Бесстрашная, тёплая и обаятельно неуклюжая — она пересекла заснеженный горный хребет ради одной лишь любви. Когда оказалось, что вечную зиму может растопить лишь сестринские объятия, Анна доказала: ответ был рядом всё это время.",
-    booster: "Набор «Лунные грёзы»",
-    obtainedDate: "18 декабря 2024",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Нала": {
     story: "Львиная королева, которая никогда не перестала верить в законного короля — даже когда он сам забыл, кто он. Её решимость провела её через саванну и вернула Симбу на Скалу Предков, где ему и суждено было стоять.",
-    booster: "Набор «Золотое наследие»",
-    obtainedDate: "29 января 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Королева Эльза": {
     story: "Она стала королевой льда раньше, чем успела стать собой. В её власти не было театральности — лишь непреклонная ледяная воля и дворец, где чувства считались роскошью, от которой давно отказались. И всё же иногда, на миг, мороз отступал — не от тепла, а от памяти, которую лёд ещё не сумел стереть до конца.",
-    booster: "Коллекция «Падение звёзд» · Призматическое издание",
-    obtainedDate: "21 июня 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Мегара": {
     story: "Острая на язык и яростно самостоятельная, она заключила сделку с тьмой и заплатила цену, которой не ожидала. Но в решающий момент выбрала любовь вместо обещанного бессмертия — и этот выбор сделал её героиней.",
-    booster: "Коллекция «Падение звёзд» · Призматическое издание",
-    obtainedDate: "1 апреля 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Эсмеральда": {
     story: "Вольный дух, танцевавший на площади у собора; её сострадание к изгоям горело ярче любого факела. Она устыдила могущественных своей грацией и осветила брусчатку Парижа человечностью, которую нельзя было погасить.",
-    booster: "Набор «Лунные грёзы»",
-    obtainedDate: "25 марта 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Джейн": {
     story: "Она приехала в джунгли с альбомом для эскизов и теорией, а уехала — с домом. Учёная, документировавшая невероятное, нашла, что самое удивительное открытие — связь двух миров, которые не должны были сойтись, но сошлись.",
-    booster: "Набор «Зачарованный лес»",
-    obtainedDate: "4 мая 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Мирабель": {
     story: "Единственная Мадригаль без магического дара — пока все не поняли, что даром была всегда она. Она удержала семью, когда чудо рушилось, и тем самым стала самим чудом.",
-    booster: "Набор «Королевское пробуждение»",
-    obtainedDate: "20 февраля 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Динь-Динь": {
     story: "Крошечная фея с острым характером, ещё более яркой верностью и талантом чинить то, без чего Нетландия не жила бы. Она оставляла везде волшебную пыль — и помогла мальчику, не желавшему взрослеть, поверить в нечто сильнее полёта.",
-    booster: "Набор «Лунные грёзы»",
-    obtainedDate: "13 апреля 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Кида": {
     story: "Древняя атлантийская воительница-принцесса, видевшая, как века проходят, словно приливы. Когда пришли исследователи с кристаллом и вопросом, лишь она осмелилась довериться ответу — и пробудила цивилизацию от камня, вернув её сердце живым.",
-    booster: "Коллекция «Мистические приливы»",
-    obtainedDate: "18 мая 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
   "Жизель": {
     story: "Сказочная принцесса, выпавшая в реальный мир и всё ещё поющая. Она не отказалась верить в «и они жили долго и счастливо» — не потому что мир заслуживал это, а потому что заслуживала она. И в конце её уверенность сделала это правдой для всех вокруг.",
-    booster: "Набор «Хрустальное королевство»",
-    obtainedDate: "7 июня 2025",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
+  },
+  "Флаундер": {
+    story: "Жёлто-синий друг Ариэль — верный спутник её подводных приключений. Он дрожал от каждой опасности и всё равно плыл за ней, потому что настоящая дружба не спрашивает, страшно ли. Когда мир казался слишком большим, он оставался рядом — и этого хватало, чтобы мечта не утонула.",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
+  },
+  "Олаф": {
+    story: "Снежный друг Анны и Эльзы — рождённый из детской магии и мечты о лете. Он говорил об объятиях так, будто знал: настоящее тепло не в солнце, а в тех, кто рядом. Когда королевство сковывал лёд, Олаф оставался светом, который не тает даже в самую долгую зиму.",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
+  },
+  "Паскаль": {
+    story: "Хамелеон Рапунцель — друг, которому в башне можно было доверять по-настоящему. Он не говорил, зато всё понимал: когда страшно, когда смешно, когда пора бить тревогу. Когда Рапунцель вышла за ворота, Паскаль пошёл с ней — маленький, упрямый и готовый встать между ней и любой опасностью.",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
   },
 };
 
@@ -723,7 +746,7 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
           ? `drop-shadow(0 0 ${Math.round(cfg.glowStr * 0.4)}px ${cfg.glowCol}65)`
           : "drop-shadow(0 6px 18px rgba(0,0,0,0.75))",
       }}>
-        <CardSVG rarity={rarity} portrait={portrait ?? portraitImg} princessName={princess} />
+        <CardSVG rarity={rarity} portrait={portrait ?? cinderellaImg} princessName={princess} />
       </div>
 
       {/* Rarity badge */}
@@ -751,7 +774,7 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
 function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
   const cfg = CFG[card.rarity];
   const details = CARD_DETAILS[card.princess];
-  const portrait = card.portrait ?? portraitImg;
+  const portrait = card.portrait ?? cinderellaImg;
 
   // 3D tilt for the modal card
   const modalCardRef = useRef<HTMLDivElement>(null);
