@@ -12,6 +12,19 @@ import rapunzelImg from "@/imports/rapunzel.webp";
 import jasmineImg from "@/imports/jasmine.webp";
 import cinderellaImg from "@/imports/cinderella.webp";
 import moanaImg from "@/imports/moana.webp";
+import pocahontasImg from "@/imports/pocahontas.webp";
+import tianaImg from "@/imports/tiana.webp";
+import meridaImg from "@/imports/merida.webp";
+import ashaImg from "@/imports/asha.webp";
+import mulanImg from "@/imports/mulan.webp";
+import nalaImg from "@/imports/nala.webp";
+import janeImg from "@/imports/jane.webp";
+import esmeraldaImg from "@/imports/esmeralda.webp";
+import mirabelImg from "@/imports/mirabel.webp";
+import tinkerBellImg from "@/imports/tinker-bell.webp";
+import giselleImg from "@/imports/giselle.webp";
+import kidaImg from "@/imports/kida.webp";
+import annaImg from "@/imports/anna.webp";
 
 type RarityKey = "common" | "uncommon" | "rare" | "epic" | "legendary" | "secretRare";
 
@@ -115,23 +128,23 @@ const CARDS: CardDef[] = [
   { princess: "Рапунцель",     rarity: "epic",       portrait: rapunzelImg },
   { princess: "Жасмин",        rarity: "uncommon",   portrait: jasmineImg },
   { princess: "Моана",         rarity: "rare",       portrait: moanaImg },
-  { princess: "Покахонтас",    rarity: "common"     },
+  { princess: "Покахонтас",    rarity: "common",     portrait: pocahontasImg },
   { princess: "Аврора",        rarity: "legendary",  portrait: auroraImg },
-  { princess: "Тиана",         rarity: "uncommon"   },
-  { princess: "Мерида",        rarity: "rare"       },
-  { princess: "Аша",           rarity: "common"     },
+  { princess: "Тиана",         rarity: "uncommon",   portrait: tianaImg },
+  { princess: "Мерида",        rarity: "rare",       portrait: meridaImg },
+  { princess: "Аша",           rarity: "common",     portrait: ashaImg },
   { princess: "Рая",           rarity: "epic",       portrait: rayaImg },
-  { princess: "Мулан",         rarity: "uncommon"   },
-  { princess: "Анна",          rarity: "rare"       },
-  { princess: "Нала",          rarity: "common"     },
-  { princess: "Эльза",         rarity: "secretRare", portrait: elsaImg },
+  { princess: "Мулан",         rarity: "uncommon",   portrait: mulanImg },
+  { princess: "Анна",          rarity: "rare",       portrait: annaImg },
+  { princess: "Нала",          rarity: "common",     portrait: nalaImg },
+  { princess: "Королева Эльза", rarity: "secretRare", portrait: elsaImg },
   { princess: "Мегара",        rarity: "secretRare", portrait: megaraImg },
-  { princess: "Эсмеральда",    rarity: "rare"       },
-  { princess: "Джейн",         rarity: "common"     },
-  { princess: "Мирабель",      rarity: "epic"       },
-  { princess: "Динь-Динь",     rarity: "uncommon"   },
-  { princess: "Кида",          rarity: "rare"       },
-  { princess: "Жизель",        rarity: "uncommon"   },
+  { princess: "Эсмеральда",    rarity: "rare",       portrait: esmeraldaImg },
+  { princess: "Джейн",         rarity: "common",     portrait: janeImg },
+  { princess: "Мирабель",      rarity: "epic",       portrait: mirabelImg },
+  { princess: "Динь-Динь",     rarity: "uncommon",   portrait: tinkerBellImg },
+  { princess: "Кида",          rarity: "rare",       portrait: kidaImg },
+  { princess: "Жизель",        rarity: "uncommon",   portrait: giselleImg },
 ];
 
 interface CardDetails {
@@ -221,8 +234,8 @@ const CARD_DETAILS: Record<string, CardDetails> = {
     booster: "Набор «Золотое наследие»",
     obtainedDate: "29 января 2025",
   },
-  "Эльза": {
-    story: "Эльза правила ледяным королевством, не терпя ни возражений, ни жалости. Мороз для неё был не проклятием, а мерой порядка: чувства — во льду, дыхание — под контролем. Угрозы ей были ни к чему — одного взгляда хватало, чтобы тишина сгущалась, словно перед бурей. В её власти не было театральности, лишь непреклонная ледяная воля.",
+  "Королева Эльза": {
+    story: "Она стала королевой льда раньше, чем успела стать собой. В её власти не было театральности — лишь непреклонная ледяная воля и дворец, где чувства считались роскошью, от которой давно отказались. И всё же иногда, на миг, мороз отступал — не от тепла, а от памяти, которую лёд ещё не сумел стереть до конца.",
     booster: "Коллекция «Падение звёзд» · Призматическое издание",
     obtainedDate: "21 июня 2025",
   },
