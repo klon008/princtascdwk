@@ -49,3 +49,6 @@ Desktop.ini
 
 # Cursor / local tooling
 .cursor/
+
+# Local image backups
+src/imports/backup/

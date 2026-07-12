@@ -76,11 +76,11 @@ const CFG: Record<RarityKey, RC> = {
     particles: 50, holo: false, cornerLv: 5, bottomGems: 5,
   },
   secretRare: {
-    name: "Secret Rare", tier: "★", color: "#FF50FF",
+    name: "Secret Rare", tier: "★", color: "#D4567A",
     frameW: 30, goldBase: "#FFD700", goldHigh: "#FFF080",
-    gemMain: "#EE00EE", gemAlt: "#CC00CC",
-    bgCenter: "#060314", bgEdge: "#030108",
-    glowCol: "#FF00FF", glowStr: 36,
+    gemMain: "#A82850", gemAlt: "#6B1535",
+    bgCenter: "#0a0206", bgEdge: "#040102",
+    glowCol: "#C83862", glowStr: 36,
     crown: true, filigree: true, rays: true,
     particles: 75, holo: true, cornerLv: 6, bottomGems: 7,
   },
@@ -352,7 +352,8 @@ function CardSVG({ rarity, portrait, princessName }: {
   const imgX = 20, imgY = 80, imgW = 310, imgH = 330;
   const bpY = imgY + imgH + 6;
   const bpH = Math.max(H - fw - 4 - bpY, 36);
-  const nameFontSize = princessName.length > 12 ? 9 : princessName.length > 9 ? 10 : princessName.length > 7 ? 11 : 13;
+  const nameFontSize = princessName.length > 12 ? 11 : princessName.length > 9 ? 12 : princessName.length > 7 ? 13 : 15;
+  const nameLetterSpacing = princessName.length > 12 ? 1 : princessName.length > 9 ? 1.5 : 2.5;
 
   const particles = useMemo(() => {
     const pts: Array<{ x: number; y: number; r: number; op: number }> = [];
@@ -506,9 +507,9 @@ function CardSVG({ rarity, portrait, princessName }: {
       {/* Princess name */}
       <text x={175} y={fw + 30}
         textAnchor="middle" dominantBaseline="middle"
-        fontFamily='"Cinzel", "Playfair Display", serif'
+        fontFamily='"Cinzel", "Spectral", serif'
         fontSize={nameFontSize} fontWeight="700"
-        fill={c.goldHigh} letterSpacing="3" opacity="0.95">
+        fill={c.goldHigh} letterSpacing={nameLetterSpacing} opacity="0.95">
         {princessName.toUpperCase()}
       </text>
 
@@ -704,7 +705,7 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
           <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
             style={{ background: cfg.color, boxShadow: `0 0 5px ${cfg.color}` }} />
           <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.18em] uppercase"
-            style={{ color: cfg.color, fontFamily: '"Cinzel", "Playfair Display", serif' }}>
+            style={{ color: cfg.color, fontFamily: '"Cinzel", "Spectral", serif' }}>
             {cfg.name}
           </span>
         </div>
@@ -804,7 +805,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
             style={{ border: `1px solid ${cfg.color}40`, background: `${cfg.color}12` }}>
             <div className="w-2 h-2 rounded-full" style={{ background: cfg.color, boxShadow: `0 0 6px ${cfg.color}` }} />
             <span className="text-xs font-bold tracking-widest uppercase"
-              style={{ color: cfg.color, fontFamily: '"Cinzel", "Playfair Display", serif' }}>
+              style={{ color: cfg.color, fontFamily: '"Cinzel", "Spectral", serif' }}>
               {cfg.name}
             </span>
             <span className="text-xs ml-1" style={{ color: cfg.color, opacity: 0.55 }}>{cfg.tier}</span>
@@ -821,7 +822,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
               </p>
               <h2 className="text-2xl sm:text-3xl font-black tracking-widest"
                 style={{
-                  fontFamily: '"Cinzel Decorative", "Playfair Display", serif',
+                  fontFamily: '"Cinzel Decorative", "Spectral", serif',
                   background: `linear-gradient(135deg, ${cfg.goldBase ?? "#9A8050"}, ${cfg.goldHigh ?? "#F0D060"}, ${cfg.goldBase ?? "#9A8050"})`,
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -868,7 +869,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
                   <path d="M4 3V2a3 3 0 016 0v1" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                   <path d="M5 7h4M7 5v4" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", "Playfair Display", serif' }}>
+                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", "Spectral", serif' }}>
                   {details?.booster ?? "Неизвестный набор"}
                 </span>
               </div>
@@ -882,7 +883,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
                   <path d="M1 6h12" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M4 1v3M10 1v3" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", "Playfair Display", serif' }}>
+                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", "Spectral", serif' }}>
                   {details?.obtainedDate ?? "Неизвестно"}
                 </span>
               </div>
@@ -965,7 +966,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#030610] relative" style={{ fontFamily: '"Cinzel", "Playfair Display", serif' }}>
+    <div className="min-h-screen bg-[#030610] relative" style={{ fontFamily: '"Cinzel", "Spectral", serif' }}>
 
       <style>{`
         @keyframes holo-shift {
@@ -1008,7 +1009,7 @@ export default function App() {
         </p>
         <h1 className="text-3xl sm:text-5xl font-black tracking-widest"
           style={{
-            fontFamily: '"Cinzel Decorative", "Playfair Display", serif',
+            fontFamily: '"Cinzel Decorative", "Spectral", serif',
             background: "linear-gradient(135deg, #9A8050 0%, #F0D060 35%, #D4AF37 55%, #F0D060 75%, #9A8050 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
