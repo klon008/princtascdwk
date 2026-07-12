@@ -1,7 +1,7 @@
 import { useMemo, useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import portraitImg from "@/imports/20260712_062815_flux_Portrait_of_Flounder_from_Disney_s_The_L_ComfyUI_00118_.png";
-import elsaImg from "@/imports/20260712_065927_flux_Portrait_of_Elsa_from_Disney_s_Frozen__c_ComfyUI_00119_.png";
+import portraitImg from "@/imports/20260712_062815_flux_Portrait_of_Flounder_from_The_L_ComfyUI_00118_.png";
+import elsaImg from "@/imports/20260712_065927_flux_Portrait_of_Elsa_from_Frozen__c_ComfyUI_00119_.png";
 import auroraImg from "@/imports/editing_result_e6345ab87d3f11f1a0a5cefd6ad41579_1.jpg";
 
 type RarityKey = "common" | "uncommon" | "rare" | "epic" | "legendary" | "secretRare";
@@ -91,32 +91,32 @@ interface CardDef {
   portrait?: string;
 }
 
-// 24 cards — organically shuffled so rarities are interspersed
+// 24 карты — редкости перемешаны для естественного распределения
 const CARDS: CardDef[] = [
-  { princess: "Cinderella",  rarity: "common"     },
-  { princess: "Belle",       rarity: "uncommon"   },
-  { princess: "Ariel",       rarity: "rare"       },
-  { princess: "Snow White",  rarity: "common"     },
-  { princess: "Rapunzel",    rarity: "epic"       },
-  { princess: "Jasmine",     rarity: "uncommon"   },
-  { princess: "Moana",       rarity: "rare"       },
-  { princess: "Pocahontas",  rarity: "common"     },
-  { princess: "Aurora",      rarity: "legendary",  portrait: auroraImg },
-  { princess: "Tiana",       rarity: "uncommon"   },
-  { princess: "Merida",      rarity: "rare"       },
-  { princess: "Asha",        rarity: "common"     },
-  { princess: "Raya",        rarity: "epic"       },
-  { princess: "Mulan",       rarity: "uncommon"   },
-  { princess: "Anna",        rarity: "rare"       },
-  { princess: "Nala",        rarity: "common"     },
-  { princess: "Elsa",        rarity: "secretRare", portrait: elsaImg },
-  { princess: "Megara",      rarity: "uncommon"   },
-  { princess: "Esmeralda",   rarity: "rare"       },
-  { princess: "Jane",        rarity: "common"     },
-  { princess: "Mirabel",     rarity: "epic"       },
-  { princess: "Tinker Bell", rarity: "uncommon"   },
-  { princess: "Kida",        rarity: "rare"       },
-  { princess: "Giselle",     rarity: "uncommon"   },
+  { princess: "Золушка",       rarity: "common"     },
+  { princess: "Белль",         rarity: "uncommon"   },
+  { princess: "Ариэль",        rarity: "rare"       },
+  { princess: "Белоснежка",    rarity: "common"     },
+  { princess: "Рапунцель",     rarity: "epic"       },
+  { princess: "Жасмин",        rarity: "uncommon"   },
+  { princess: "Моана",         rarity: "rare"       },
+  { princess: "Покахонтас",    rarity: "common"     },
+  { princess: "Аврора",        rarity: "legendary",  portrait: auroraImg },
+  { princess: "Тиана",         rarity: "uncommon"   },
+  { princess: "Мерида",        rarity: "rare"       },
+  { princess: "Аша",           rarity: "common"     },
+  { princess: "Рая",           rarity: "epic"       },
+  { princess: "Мулан",         rarity: "uncommon"   },
+  { princess: "Анна",          rarity: "rare"       },
+  { princess: "Нала",          rarity: "common"     },
+  { princess: "Эльза",         rarity: "secretRare", portrait: elsaImg },
+  { princess: "Мегара",        rarity: "uncommon"   },
+  { princess: "Эсмеральда",    rarity: "rare"       },
+  { princess: "Джейн",         rarity: "common"     },
+  { princess: "Мирабель",      rarity: "epic"       },
+  { princess: "Динь-Динь",     rarity: "uncommon"   },
+  { princess: "Кида",          rarity: "rare"       },
+  { princess: "Жизель",        rarity: "uncommon"   },
 ];
 
 interface CardDetails {
@@ -126,125 +126,125 @@ interface CardDetails {
 }
 
 const CARD_DETAILS: Record<string, CardDetails> = {
-  "Cinderella": {
-    story: "A kind-hearted girl whose patience and grace earned her a place in the royal court. Despite years of hardship, she never lost her warmth — and a single glass slipper proved that true nobility lives in the heart, not in lineage.",
-    booster: "Royal Awakening Pack",
-    obtainedDate: "February 14, 2025",
+  "Золушка": {
+    story: "Добрая девушка, чьё терпение и благородство открыли ей дорогу ко двору. Годы тяжёлой работы не смогли остудить её сердце — и одна хрустальная туфелька доказала, что истинное величие живёт в душе, а не в родословной.",
+    booster: "Набор «Королевское пробуждение»",
+    obtainedDate: "14 февраля 2025",
   },
-  "Belle": {
-    story: "A bookworm who saw beauty where others saw only a beast. Her courage and compassion broke an ancient enchantment, transforming a cursed palace into a home filled with light — and teaching an entire kingdom that love sees beyond appearances.",
-    booster: "Enchanted Forest Pack",
-    obtainedDate: "March 3, 2025",
+  "Белль": {
+    story: "Книжная мечтательница, увидевшая красоту там, где другие видели лишь чудовище. Её смелость и сострадание разрушили древнее проклятие, превратив проклятый замок в дом, наполненный светом, — и научили всё королевство, что любовь смотрит глубже, чем на лицо.",
+    booster: "Набор «Зачарованный лес»",
+    obtainedDate: "3 марта 2025",
   },
-  "Ariel": {
-    story: "A mermaid princess who traded her voice for legs and discovered that the greatest adventures begin when you follow your heart. She bridged two worlds — ocean and land — and proved that dreams are worth every sacrifice.",
-    booster: "Mystic Tides Collection",
-    obtainedDate: "January 20, 2025",
+  "Ариэль": {
+    story: "Русалочка, которая отдала голос ради ног и поняла: самые великие приключения начинаются, когда следуешь зову сердца. Она соединила два мира — океан и сушу — и доказала, что мечты стоят любой жертвы.",
+    booster: "Коллекция «Мистические приливы»",
+    obtainedDate: "20 января 2025",
   },
-  "Snow White": {
-    story: "The fairest of all, whose gentle spirit survived dark enchantments, a poisoned apple, and the jealousy of a wicked queen. She awakened to a kingdom transformed by her enduring goodness and the love she inspired in all who knew her.",
-    booster: "Golden Legacy Pack",
-    obtainedDate: "April 7, 2025",
+  "Белоснежка": {
+    story: "Самая прекрасная из всех, чей нежный дух пережил тёмное колдовство, отравленное яблоко и зависть злой королевы. Она проснулась в королевстве, преображённом её добротой и любовью, которую внушала всем, кто её знал.",
+    booster: "Набор «Золотое наследие»",
+    obtainedDate: "7 апреля 2025",
   },
-  "Rapunzel": {
-    story: "Locked in a tower for eighteen years, she carried her dream inside her like a lantern flame. When she finally stepped into the world, she illuminated everything around her — and discovered that the crown she sought had always belonged to her.",
-    booster: "Moonlit Dreams Pack",
-    obtainedDate: "March 21, 2025",
+  "Рапунцель": {
+    story: "Восемнадцать лет запертая в башне, она несла мечту внутри себя, словно пламя фонарика. Когда наконец вышла в мир, осветила всё вокруг — и поняла, что корона, которую искала, всегда принадлежала ей.",
+    booster: "Набор «Лунные грёзы»",
+    obtainedDate: "21 марта 2025",
   },
-  "Jasmine": {
-    story: "A princess who refused to be a prize or a political arrangement. She walked disguised through the streets of Agrabah, sought truth over comfort, and chose her own destiny — proving that a free spirit cannot be caged by palace walls.",
-    booster: "Crystal Kingdom Pack",
-    obtainedDate: "February 28, 2025",
+  "Жасмин": {
+    story: "Принцесса, отказавшаяся быть наградой или политической сделкой. Переодевшись, она бродила по улицам Аграбы, искала правду вместо комфорта и выбрала собственную судьбу — доказав, что свободный дух нельзя запереть за дворцовыми стенами.",
+    booster: "Набор «Хрустальное королевство»",
+    obtainedDate: "28 февраля 2025",
   },
-  "Moana": {
-    story: "Chosen by the ocean itself, she crossed the open sea to restore the heart of Te Fiti and save her island. Her navigation was not just of stars and waves, but of identity — discovering who she was by sailing beyond the horizon.",
-    booster: "Mystic Tides Collection",
-    obtainedDate: "May 11, 2025",
+  "Моана": {
+    story: "Избранная самим океаном, она пересекла открытое море, чтобы вернуть сердце Те Фити и спасти свой остров. Её путь — не только по звёздам и волнам, но и к себе: она нашла, кто она есть, лишь отплыв за горизонт.",
+    booster: "Коллекция «Мистические приливы»",
+    obtainedDate: "11 мая 2025",
   },
-  "Pocahontas": {
-    story: "A daughter of the wind and river, she listened when others only fought. Her voice bridged two civilizations on the edge of war — and her courage changed the course of history with nothing more than the truth.",
-    booster: "Enchanted Forest Pack",
-    obtainedDate: "January 5, 2025",
+  "Покахонтас": {
+    story: "Дочь ветра и реки, которая слушала, когда другие лишь сражались. Её голос соединил две цивилизации на грани войны — и её смелость изменила ход истории одной лишь правдой.",
+    booster: "Набор «Зачарованный лес»",
+    obtainedDate: "5 января 2025",
   },
-  "Aurora": {
-    story: "Cursed at birth yet blessed with an enduring grace, she slept through fate and woke to find the world had waited for her. A princess of both wild forests and royal courts, she embodies the magic that lives between dreams and waking.",
-    booster: "Starfall Collection",
-    obtainedDate: "June 1, 2025",
+  "Аврора": {
+    story: "Проклятая при рождении, но наделённая неувядаемой грацией, она проспала судьбу и проснулась, когда мир уже ждал её. Принцесса и диких лесов, и королевских залов — олицетворение магии между сном и пробуждением.",
+    booster: "Коллекция «Падение звёзд»",
+    obtainedDate: "1 июня 2025",
   },
-  "Tiana": {
-    story: "The hardest-working woman in New Orleans, her dreams became real not through magic alone, but through determination, sacrifice, and love. She turned a kiss into a restaurant and a wish into a legacy — one beignet at a time.",
-    booster: "Golden Legacy Pack",
-    obtainedDate: "March 15, 2025",
+  "Тиана": {
+    story: "Самая трудолюбивая женщина Нового Орлеана: её мечты сбылись не только благодаря магии, но и упорству, жертве и любви. Она превратила поцелуй в ресторан, а желание — в наследие, по одному бенье за раз.",
+    booster: "Набор «Золотое наследие»",
+    obtainedDate: "15 марта 2025",
   },
-  "Merida": {
-    story: "The only princess who fights for her own fate — with a bow and arrow and a will that cannot be bent. Her arrow flew true not toward a suitor, but toward freedom, and she broke a centuries-old curse with a mother's love and a daughter's courage.",
-    booster: "Enchanted Forest Pack",
-    obtainedDate: "April 19, 2025",
+  "Мерида": {
+    story: "Единственная принцесса, сражающаяся за собственную судьбу — с луком, стрелами и волей, которую не сломить. Её стрела полетела не к жениху, а к свободе, и она сняла вековое проклятие материнской любовью и дочерней смелостью.",
+    booster: "Набор «Зачарованный лес»",
+    obtainedDate: "19 апреля 2025",
   },
-  "Asha": {
-    story: "A young stargazer whose wish was so pure it touched the cosmos. She called upon a cosmic guardian and discovered that the greatest magic is not granted by kings — it lives in the dreams of ordinary people who dare to believe.",
-    booster: "Starfall Collection",
-    obtainedDate: "February 2, 2025",
+  "Аша": {
+    story: "Юная мечтательница, чьё желание было настолько чистым, что коснулось космоса. Она призвала звёздного стража и поняла: величайшая магия не даруется королями — она живёт в мечтах простых людей, осмелившихся верить.",
+    booster: "Коллекция «Падение звёзд»",
+    obtainedDate: "2 февраля 2025",
   },
-  "Raya": {
-    story: "The last dragon guardian of Kumandra, she learned that trust is the rarest magic in a broken world. When she finally leapt into faith — literally — she mended what hatred had shattered and restored the dragons to the sky.",
-    booster: "Crystal Kingdom Pack",
-    obtainedDate: "May 30, 2025",
+  "Рая": {
+    story: "Последняя хранительница драконов Кумандры, которая поняла: доверие — редчайшая магия в разрушенном мире. Когда она наконец прыгнула в веру — буквально — она склеила то, что разрушила ненависть, и вернула драконов в небо.",
+    booster: "Набор «Хрустальное королевство»",
+    obtainedDate: "30 мая 2025",
   },
-  "Mulan": {
-    story: "She rode to war in her father's armor and returned a hero who had saved an empire. In a world that told her to be silent, she spoke with action — and proved that honor is not a matter of name, gender, or expectation.",
-    booster: "Royal Awakening Pack",
-    obtainedDate: "March 8, 2025",
+  "Мулан": {
+    story: "Она отправилась на войну в доспехах отца и вернулась героиней, спасшей империю. В мире, где ей велели молчать, она говорила поступками — и доказала, что честь не зависит от имени, пола или ожиданий.",
+    booster: "Набор «Королевское пробуждение»",
+    obtainedDate: "8 марта 2025",
   },
-  "Anna": {
-    story: "Fearless, warm, and endearingly clumsy, she crossed a frozen mountain range on sheer love. When the only force that could thaw eternal winter turned out to be a sisterly embrace, Anna proved it had been the answer all along.",
-    booster: "Moonlit Dreams Pack",
-    obtainedDate: "December 18, 2024",
+  "Анна": {
+    story: "Бесстрашная, тёплая и обаятельно неуклюжая — она пересекла заснеженный горный хребет ради одной лишь любви. Когда оказалось, что вечную зиму может растопить лишь сестринские объятия, Анна доказала: ответ был рядом всё это время.",
+    booster: "Набор «Лунные грёзы»",
+    obtainedDate: "18 декабря 2024",
   },
-  "Nala": {
-    story: "A lion queen who never stopped believing in the rightful king — even when he had forgotten himself. Her determination carried her across the savanna and brought Simba home to Pride Rock, where he was always meant to stand.",
-    booster: "Golden Legacy Pack",
-    obtainedDate: "January 29, 2025",
+  "Нала": {
+    story: "Львиная королева, которая никогда не перестала верить в законного короля — даже когда он сам забыл, кто он. Её решимость провела её через саванну и вернула Симбу на Скалу Предков, где ему и суждено было стоять.",
+    booster: "Набор «Золотое наследие»",
+    obtainedDate: "29 января 2025",
   },
-  "Elsa": {
-    story: "Born with the power of winter itself flowing through her hands, she built a kingdom of ice and silence — until love finally taught her that she was never the monster she feared. Her magic is not a curse. It is a crown.",
-    booster: "Starfall Collection · Prismatic Edition",
-    obtainedDate: "June 21, 2025",
+  "Эльза": {
+    story: "Рождённая с силой зимы в руках, она построила ледяное королевство и укрылась в тишине — пока любовь не научила её: она никогда не была тем чудовищем, которого боялась. Её магия — не проклятие. Это корона.",
+    booster: "Коллекция «Падение звёзд» · Призматическое издание",
+    obtainedDate: "21 июня 2025",
   },
-  "Megara": {
-    story: "Sharp-tongued and fiercely self-reliant, she made a deal with darkness and paid a price she did not foresee. But when the moment came, she chose love over the immortality she had been promised — and that choice made her a hero.",
-    booster: "Crystal Kingdom Pack",
-    obtainedDate: "April 1, 2025",
+  "Мегара": {
+    story: "Острая на язык и яростно самостоятельная, она заключила сделку с тьмой и заплатила цену, которой не ожидала. Но в решающий момент выбрала любовь вместо обещанного бессмертия — и этот выбор сделал её героиней.",
+    booster: "Набор «Хрустальное королевство»",
+    obtainedDate: "1 апреля 2025",
   },
-  "Esmeralda": {
-    story: "A free spirit who danced in the cathedral square, her compassion for outcasts burned brighter than any torch. She shamed the powerful with her grace and lit the cobblestoned streets of Paris with a humanity that could not be extinguished.",
-    booster: "Moonlit Dreams Pack",
-    obtainedDate: "March 25, 2025",
+  "Эсмеральда": {
+    story: "Вольный дух, танцевавший на площади у собора; её сострадание к изгоям горело ярче любого факела. Она устыдила могущественных своей грацией и осветила брусчатку Парижа человечностью, которую нельзя было погасить.",
+    booster: "Набор «Лунные грёзы»",
+    obtainedDate: "25 марта 2025",
   },
-  "Jane": {
-    story: "She arrived in the jungle with a sketchbook and a theory, and left with a home. A scientist who documented the extraordinary, she found that the most remarkable discovery of all was the bond between two worlds that shouldn't have fit together — but did.",
-    booster: "Enchanted Forest Pack",
-    obtainedDate: "May 4, 2025",
+  "Джейн": {
+    story: "Она приехала в джунгли с альбомом для эскизов и теорией, а уехала — с домом. Учёная, документировавшая невероятное, нашла, что самое удивительное открытие — связь двух миров, которые не должны были сойтись, но сошлись.",
+    booster: "Набор «Зачарованный лес»",
+    obtainedDate: "4 мая 2025",
   },
-  "Mirabel": {
-    story: "The one Madrigal who received no magical gift — until everyone finally understood that the gift was always her. She held her family together when the miracle crumbled, and in doing so, became the miracle itself.",
-    booster: "Royal Awakening Pack",
-    obtainedDate: "February 20, 2025",
+  "Мирабель": {
+    story: "Единственная Мадригаль без магического дара — пока все не поняли, что даром была всегда она. Она удержала семью, когда чудо рушилось, и тем самым стала самим чудом.",
+    booster: "Набор «Королевское пробуждение»",
+    obtainedDate: "20 февраля 2025",
   },
-  "Tinker Bell": {
-    story: "A tiny fairy with a fierce temper, an even fiercer loyalty, and a talent for tinkering that kept Neverland running. She left pixie dust wherever she flew — and helped a boy who never wanted to grow up believe in something even more powerful than flight.",
-    booster: "Moonlit Dreams Pack",
-    obtainedDate: "April 13, 2025",
+  "Динь-Динь": {
+    story: "Крошечная фея с острым характером, ещё более яркой верностью и талантом чинить то, без чего Нетландия не жила бы. Она оставляла везде волшебную пыль — и помогла мальчику, не желавшему взрослеть, поверить в нечто сильнее полёта.",
+    booster: "Набор «Лунные грёзы»",
+    obtainedDate: "13 апреля 2025",
   },
-  "Kida": {
-    story: "An ancient Atlantean warrior-princess who had watched centuries pass like tides. When explorers arrived with a crystal and a question, she alone was brave enough to trust the answer — and awoke her civilization from stone, restoring its heart to the living.",
-    booster: "Mystic Tides Collection",
-    obtainedDate: "May 18, 2025",
+  "Кида": {
+    story: "Древняя атлантийская воительница-принцесса, видевшая, как века проходят, словно приливы. Когда пришли исследователи с кристаллом и вопросом, лишь она осмелилась довериться ответу — и пробудила цивилизацию от камня, вернув её сердце живым.",
+    booster: "Коллекция «Мистические приливы»",
+    obtainedDate: "18 мая 2025",
   },
-  "Giselle": {
-    story: "A fairy-tale princess who tumbled into the real world still singing. She refused to surrender her belief in happily ever after — not because the world deserved it, but because she did. And in the end, her certainty made it true for everyone around her.",
-    booster: "Crystal Kingdom Pack",
-    obtainedDate: "June 7, 2025",
+  "Жизель": {
+    story: "Сказочная принцесса, выпавшая в реальный мир и всё ещё поющая. Она не отказалась верить в «и они жили долго и счастливо» — не потому что мир заслуживал это, а потому что заслуживала она. И в конце её уверенность сделала это правдой для всех вокруг.",
+    booster: "Набор «Хрустальное королевство»",
+    obtainedDate: "7 июня 2025",
   },
 };
 
@@ -351,7 +351,7 @@ function CardSVG({ rarity, portrait, princessName }: {
   const imgX = 20, imgY = 80, imgW = 310, imgH = 330;
   const bpY = imgY + imgH + 6;
   const bpH = Math.max(H - fw - 4 - bpY, 36);
-  const nameFontSize = princessName.length > 9 ? 10 : princessName.length > 7 ? 11 : 13;
+  const nameFontSize = princessName.length > 12 ? 9 : princessName.length > 9 ? 10 : princessName.length > 7 ? 11 : 13;
 
   const particles = useMemo(() => {
     const pts: Array<{ x: number; y: number; r: number; op: number }> = [];
@@ -505,7 +505,7 @@ function CardSVG({ rarity, portrait, princessName }: {
       {/* Princess name */}
       <text x={175} y={fw + 30}
         textAnchor="middle" dominantBaseline="middle"
-        fontFamily='"Cinzel", serif'
+        fontFamily='"Cinzel", "Playfair Display", serif'
         fontSize={nameFontSize} fontWeight="700"
         fill={c.goldHigh} letterSpacing="3" opacity="0.95">
         {princessName.toUpperCase()}
@@ -703,7 +703,7 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
           <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
             style={{ background: cfg.color, boxShadow: `0 0 5px ${cfg.color}` }} />
           <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.18em] uppercase"
-            style={{ color: cfg.color, fontFamily: '"Cinzel", serif' }}>
+            style={{ color: cfg.color, fontFamily: '"Cinzel", "Playfair Display", serif' }}>
             {cfg.name}
           </span>
         </div>
@@ -803,7 +803,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
             style={{ border: `1px solid ${cfg.color}40`, background: `${cfg.color}12` }}>
             <div className="w-2 h-2 rounded-full" style={{ background: cfg.color, boxShadow: `0 0 6px ${cfg.color}` }} />
             <span className="text-xs font-bold tracking-widest uppercase"
-              style={{ color: cfg.color, fontFamily: '"Cinzel", serif' }}>
+              style={{ color: cfg.color, fontFamily: '"Cinzel", "Playfair Display", serif' }}>
               {cfg.name}
             </span>
             <span className="text-xs ml-1" style={{ color: cfg.color, opacity: 0.55 }}>{cfg.tier}</span>
@@ -816,11 +816,11 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[10px] tracking-[0.4em] mb-1 uppercase" style={{ color: "#4A5A7A" }}>
-                Disney Princess Collection
+                Коллекция принцесс
               </p>
               <h2 className="text-2xl sm:text-3xl font-black tracking-widest"
                 style={{
-                  fontFamily: '"Cinzel Decorative", serif',
+                  fontFamily: '"Cinzel Decorative", "Playfair Display", serif',
                   background: `linear-gradient(135deg, ${cfg.goldBase ?? "#9A8050"}, ${cfg.goldHigh ?? "#F0D060"}, ${cfg.goldBase ?? "#9A8050"})`,
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -846,11 +846,11 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           {/* Story */}
           <div>
             <p className="text-[10px] tracking-[0.35em] uppercase mb-3" style={{ color: "#4A5A7A" }}>
-              Character History
+              История персонажа
             </p>
             <p className="text-sm sm:text-base leading-relaxed"
-              style={{ color: "#C8CEDC", fontFamily: '"IM Fell English", serif', fontStyle: "italic", lineHeight: 1.85 }}>
-              {details?.story ?? "A legendary figure whose story is yet to be fully told."}
+              style={{ color: "#C8CEDC", fontFamily: '"IM Fell English", "Lora", serif', fontStyle: "italic", lineHeight: 1.85 }}>
+              {details?.story ?? "Легендарная героиня, чья история ещё не полностью раскрыта."}
             </p>
           </div>
 
@@ -860,29 +860,29 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           {/* Acquisition info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl p-4" style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.15)" }}>
-              <p className="text-[9px] tracking-[0.35em] uppercase mb-1.5" style={{ color: "#4A5A7A" }}>Booster Pack</p>
+              <p className="text-[9px] tracking-[0.35em] uppercase mb-1.5" style={{ color: "#4A5A7A" }}>Бустер-пак</p>
               <div className="flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <rect x="1" y="3" width="12" height="9" rx="1.5" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M4 3V2a3 3 0 016 0v1" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                   <path d="M5 7h4M7 5v4" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", serif' }}>
-                  {details?.booster ?? "Unknown Pack"}
+                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", "Playfair Display", serif' }}>
+                  {details?.booster ?? "Неизвестный набор"}
                 </span>
               </div>
             </div>
 
             <div className="rounded-xl p-4" style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.15)" }}>
-              <p className="text-[9px] tracking-[0.35em] uppercase mb-1.5" style={{ color: "#4A5A7A" }}>Date Obtained</p>
+              <p className="text-[9px] tracking-[0.35em] uppercase mb-1.5" style={{ color: "#4A5A7A" }}>Дата получения</p>
               <div className="flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M1 6h12" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M4 1v3M10 1v3" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", serif' }}>
-                  {details?.obtainedDate ?? "Unknown"}
+                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", "Playfair Display", serif' }}>
+                  {details?.obtainedDate ?? "Неизвестно"}
                 </span>
               </div>
             </div>
@@ -890,7 +890,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
 
           {/* Card number */}
           <p className="text-[9px] tracking-[0.3em] uppercase text-right" style={{ color: "#252E42" }}>
-            Fantasy Collector Series · No. {String(CARDS.findIndex(c => c.princess === card.princess) + 1).padStart(3, "0")} / {String(CARDS.length).padStart(3, "0")}
+            Серия «Фантастический коллекционер» · № {String(CARDS.findIndex(c => c.princess === card.princess) + 1).padStart(3, "0")} / {String(CARDS.length).padStart(3, "0")}
           </p>
         </div>
       </motion.div>
@@ -964,7 +964,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#030610] relative" style={{ fontFamily: '"Cinzel", serif' }}>
+    <div className="min-h-screen bg-[#030610] relative" style={{ fontFamily: '"Cinzel", "Playfair Display", serif' }}>
 
       <style>{`
         @keyframes holo-shift {
@@ -1003,19 +1003,19 @@ export default function App() {
       {/* Header */}
       <header className="relative z-10 text-center pt-10 pb-8">
         <p className="text-[10px] tracking-[0.5em] text-[#3A4A6A] mb-2 uppercase">
-          A Fantasy Collector's Compendium
+          Дворцовая сокровищница
         </p>
         <h1 className="text-3xl sm:text-5xl font-black tracking-widest"
           style={{
-            fontFamily: '"Cinzel Decorative", serif',
+            fontFamily: '"Cinzel Decorative", "Playfair Display", serif',
             background: "linear-gradient(135deg, #9A8050 0%, #F0D060 35%, #D4AF37 55%, #F0D060 75%, #9A8050 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}>
-          Enchanted Archive
+          Enchanted Vault
         </h1>
         <p className="mt-3 text-[10px] sm:text-xs tracking-[0.3em] text-[#50608A] uppercase">
-          Disney Princess Collection · {CARDS.length} Cards · 6 Rarities
+          {CARDS.length} карты · 6 редкостей
         </p>
         <div className="flex items-center justify-center gap-3 mt-4 opacity-35">
           <div className="h-px w-28 sm:w-44" style={{ background: "linear-gradient(to right, transparent, #D4AF37)" }} />
@@ -1052,7 +1052,10 @@ export default function App() {
             <div className="h-px w-16" style={{ background: "linear-gradient(to left, transparent, #D4AF37)" }} />
           </div>
           <p className="text-[9px] tracking-[0.4em] uppercase" style={{ color: "#1E2840" }}>
-            Fantasy Collector Series · Template Edition · No. 001
+            Серия «Фантастический коллекционер» · Тираж № 001
+          </p>
+          <p className="text-[9px] tracking-[0.3em] uppercase mt-1" style={{ color: "#2A3654" }}>
+            © 2026 klon008
           </p>
         </div>
       </main>

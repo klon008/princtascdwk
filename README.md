@@ -1,11 +1,20 @@
+# Зачарованный архив
 
-  # Implement task from specification
+Коллекционная галерея карт принцесс на React + Vite.
 
-  This is a code bundle for Implement task from specification. The original project is available at https://www.figma.com/design/juAXxnNG1222lxHvAJc2Yh/Implement-task-from-specification.
+Оригинальный макет: [Figma — Implement task from specification](https://www.figma.com/design/juAXxnNG1222lxHvAJc2Yh/Implement-task-from-specification).
 
-  ## Running the code
+## Запуск
 
-  Run `npm i` to install the dependencies.
+```powershell
+npm install
+npm run dev
+```
 
-  Run `npm run dev` to start the development server.
-  
+Приложение откроется на http://localhost:5173/
+
+## Сборка
+
+```powershell
+npm run build
+```
