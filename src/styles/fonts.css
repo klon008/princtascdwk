@@ -1,10 +1,20 @@
 /* Google Fonts are loaded from index.html <link> for parallel, early fetch. */
 
+/*
+ * Кириллическая типографика (семейство PT Serif / ParaType):
+ *  - --font-card-name  имя на карте (PT Serif Caption Bold)
+ *  - --font-label      подписи, плашки редкости (PT Serif Caption)
+ *  - --font-display-en  заголовок «Enchanted Vault» (Cinzel Decorative — латиница)
+ *  - --font-display     имя героини в модалке (Prata)
+ *  - --font-ui/story   наборный текст (PT Serif)
+ */
 :root {
-  --font-ui: "Spectral", "Lora", serif;
+  --font-ui: "PT Serif", "Georgia", serif;
+  --font-label: "PT Serif Caption", "Georgia", serif;
+  --font-story: "PT Serif", "Georgia", serif;
+  --font-card-name: "PT Serif Caption", "Georgia", serif;
   --font-display-en: "Cinzel Decorative", "Cinzel", serif;
-  --font-label-en: "Cinzel", "Spectral", serif;
-  --font-story: "IM Fell English", "Lora", serif;
+  --font-display: "Prata", "PT Serif", serif;
 }
 
 body {

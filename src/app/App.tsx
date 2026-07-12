@@ -36,13 +36,6 @@ function cardTiltTransform(rx: number, ry: number, scale = 1) {
   return `rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale}) translate3d(0, 0, 0.01px)`;
 }
 
-function cardNameSizeClass(name: string) {
-  if (name.length > 12) return "card-princess-name card-princess-name--xlong";
-  if (name.length > 9) return "card-princess-name card-princess-name--long";
-  if (name.length > 7) return "card-princess-name card-princess-name--medium";
-  return "card-princess-name";
-}
-
 interface RC {
   name: string;
   tier: string;
@@ -562,10 +555,8 @@ function CardSVG({ rarity, portrait, princessName }: {
       {/* Princess name */}
       <text x={175} y={fw + 30}
         textAnchor="middle" dominantBaseline="middle"
-        className={cardNameSizeClass(princessName)}
-        fontWeight="700"
-        fill={c.goldHigh} opacity="0.95"
-        style={{ fontFamily: "var(--font-ui)" }}>
+        className="card-princess-name"
+        fill={c.goldHigh} opacity="0.95">
         {princessName.toUpperCase()}
       </text>
 
@@ -760,12 +751,11 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
         <div className="flex items-center gap-1.5">
           <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
             style={{ background: cfg.color, boxShadow: `0 0 5px ${cfg.color}` }} />
-          <span className="text-[9px] sm:text-[10px] lg:text-[14px] font-bold tracking-[0.18em] uppercase"
-            style={{ color: cfg.color, fontFamily: "var(--font-label-en)" }}>
+          <span className="type-label type-label--tile" style={{ color: cfg.color }}>
             {cfg.name}
           </span>
         </div>
-        <span className="text-[7px] tracking-widest" style={{ color: cfg.color, opacity: 0.5 }}>
+        <span className="type-tier" style={{ color: cfg.color, opacity: 0.5 }}>
           {cfg.tier}
         </span>
       </div>
@@ -810,37 +800,72 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  // Lock body scroll while open
+  // Lock body scroll while open (position:fixed prevents iOS background scroll)
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    const scrollY = window.scrollY;
+    const { style } = document.body;
+    style.position = "fixed";
+    style.top = `-${scrollY}px`;
+    style.left = "0";
+    style.right = "0";
+    style.overflow = "hidden";
+    return () => {
+      style.position = "";
+      style.top = "";
+      style.left = "";
+      style.right = "";
+      style.overflow = "";
+      window.scrollTo(0, scrollY);
+    };
   }, []);
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 overflow-y-auto overscroll-contain"
+      className="fixed inset-0 z-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="card-modal-title"
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0 min-h-full" style={{ background: "rgba(1,2,8,0.88)", backdropFilter: "blur(8px)" }} />
+      {/* Backdrop — fixed layer, never scrolls with content */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{ background: "rgba(1,2,8,0.88)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+        aria-hidden
+      />
 
-      {/* Panel wrapper — scroll lives here; card tilt must not be clipped */}
-      <div className="relative z-10 flex min-h-full items-center justify-center p-4 sm:p-8 pointer-events-none">
+      {/* Scroll layer — only the panel moves, backdrop stays put */}
+      <div
+        className="fixed inset-0 overflow-y-auto overscroll-contain modal-scroll"
+        onClick={onClose}
+      >
+      <div className="flex min-h-full items-center justify-center px-4 py-6 sm:px-6 sm:py-8 lg:px-8 pointer-events-none">
       <motion.div
-        className="relative flex flex-col lg:flex-row gap-6 lg:gap-10 w-full max-w-4xl overflow-visible pointer-events-auto"
+        className="relative flex flex-col lg:flex-row gap-5 sm:gap-6 lg:gap-10 w-full max-w-4xl overflow-visible pointer-events-auto"
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 16 }}
         transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
         onClick={e => e.stopPropagation()}
       >
+        {/* Close — viewport top-right on mobile/tablet; panel top-right on desktop */}
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Закрыть"
+          className="modal-close-btn w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer hover:bg-[rgba(212,175,55,0.18)] hover:border-[rgba(212,175,55,0.45)]"
+          style={{ border: "1px solid rgba(212,175,55,0.25)", background: "rgba(212,175,55,0.08)", color: "#D4AF37" }}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/>
+          </svg>
+        </button>
+
         {/* ── LEFT: card ── */}
-        <div className="flex-shrink-0 flex flex-col items-center lg:items-start gap-4 overflow-visible"
-          style={{ width: "100%", maxWidth: 260, margin: "0 auto" }}>
+        <div className="modal-card-column flex-shrink-0 flex flex-col items-center lg:items-start gap-3 sm:gap-4 overflow-visible">
           <div className="card-tilt-scene card-modal-tilt-scene" style={{ width: "100%" }}>
           <div
             ref={modalCardRef}
@@ -864,8 +889,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
             style={{ border: `1px solid ${cfg.color}40`, background: `${cfg.color}12` }}>
             <div className="w-2 h-2 rounded-full" style={{ background: cfg.color, boxShadow: `0 0 6px ${cfg.color}` }} />
-            <span className="text-xs font-bold tracking-widest uppercase"
-              style={{ color: cfg.color, fontFamily: "var(--font-label-en)" }}>
+            <span className="type-label" style={{ color: cfg.color }}>
               {cfg.name}
             </span>
             <span className="text-xs ml-1" style={{ color: cfg.color, opacity: 0.55 }}>{cfg.tier}</span>
@@ -873,33 +897,20 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
         </div>
 
         {/* ── RIGHT: info ── */}
-        <div className="flex-1 flex flex-col gap-5 min-w-0 overflow-y-auto overscroll-contain lg:max-h-[calc(90vh-4rem)]">
+        <div className="flex-1 flex flex-col gap-4 sm:gap-5 min-w-0 lg:max-h-[min(90vh,900px)] lg:overflow-y-auto lg:overscroll-contain">
           {/* Header */}
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-[10px] tracking-[0.3em] mb-1.5 uppercase font-semibold" style={{ color: "#8494BC" }}>
-                Коллекция принцесс
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-widest"
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  background: `linear-gradient(135deg, ${cfg.goldBase ?? "#9A8050"}, ${cfg.goldHigh ?? "#F0D060"}, ${cfg.goldBase ?? "#9A8050"})`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}>
-                {card.princess}
-              </h2>
-            </div>
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer hover:bg-[rgba(212,175,55,0.18)] hover:border-[rgba(212,175,55,0.45)]"
-              style={{ border: "1px solid rgba(212,175,55,0.25)", background: "rgba(212,175,55,0.08)", color: "#D4AF37" }}
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/>
-              </svg>
-            </button>
+          <div className="min-w-0 lg:pr-12">
+            <p className="type-eyebrow type-eyebrow--section mb-1.5" style={{ color: "#8494BC" }}>
+              Коллекция принцесс
+            </p>
+            <h2 id="card-modal-title" className="type-display-2 break-words"
+              style={{
+                background: `linear-gradient(135deg, ${cfg.goldBase ?? "#9A8050"}, ${cfg.goldHigh ?? "#F0D060"}, ${cfg.goldBase ?? "#9A8050"})`,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}>
+              {card.princess}
+            </h2>
           </div>
 
           {/* Divider */}
@@ -907,11 +918,10 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
 
           {/* Story */}
           <div>
-            <p className="text-[10px] tracking-[0.28em] uppercase mb-3 font-semibold" style={{ color: "#8494BC" }}>
+            <p className="type-eyebrow type-eyebrow--section mb-3" style={{ color: "#8494BC" }}>
               История персонажа
             </p>
-            <p className="text-sm sm:text-base leading-relaxed"
-              style={{ color: "#D8DCE8", fontFamily: "var(--font-story)", fontStyle: "italic", lineHeight: 1.85 }}>
+            <p className="type-story" style={{ color: "#ECEFF4" }}>
               {details?.story ?? "Легендарная героиня, чья история ещё не полностью раскрыта."}
             </p>
           </div>
@@ -922,28 +932,28 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           {/* Acquisition info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl p-4" style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.15)" }}>
-              <p className="text-[9px] tracking-[0.24em] uppercase mb-2 font-semibold" style={{ color: "#8494BC" }}>Бустер-пак</p>
+              <p className="type-eyebrow type-eyebrow--section mb-2" style={{ color: "#8494BC" }}>Бустер-пак</p>
               <div className="flex items-start gap-2">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="flex-shrink-0 mt-0.5">
                   <rect x="1" y="3" width="12" height="9" rx="1.5" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M4 3V2a3 3 0 016 0v1" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                   <path d="M5 7h4M7 5v4" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-sm font-semibold leading-snug" style={{ color: "#F0D882", fontFamily: "var(--font-ui)" }}>
+                <span className="type-value" style={{ color: "#F0D882" }}>
                   {details?.booster ?? "Неизвестный набор"}
                 </span>
               </div>
             </div>
 
             <div className="rounded-xl p-4" style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.15)" }}>
-              <p className="text-[9px] tracking-[0.24em] uppercase mb-2 font-semibold" style={{ color: "#8494BC" }}>Дата получения</p>
+              <p className="type-eyebrow type-eyebrow--section mb-2" style={{ color: "#8494BC" }}>Дата получения</p>
               <div className="flex items-start gap-2">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="flex-shrink-0 mt-0.5">
                   <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M1 6h12" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M4 1v3M10 1v3" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-sm font-semibold leading-snug" style={{ color: "#F0D882", fontFamily: "var(--font-ui)" }}>
+                <span className="type-value" style={{ color: "#F0D882" }}>
                   {details?.obtainedDate ?? "Неизвестно"}
                 </span>
               </div>
@@ -951,11 +961,12 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           </div>
 
           {/* Card number */}
-          <p className="text-[9px] tracking-[0.24em] uppercase text-right font-medium" style={{ color: "#5C6C94" }}>
+          <p className="type-meta text-right" style={{ color: "#5C6C94" }}>
             Серия «Фантастический коллекционер» · № {String(CARDS.findIndex(c => c.princess === card.princess) + 1).padStart(3, "0")} / {String(CARDS.length).padStart(3, "0")}
           </p>
         </div>
       </motion.div>
+      </div>
       </div>
     </motion.div>
   );
@@ -1027,7 +1038,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#030610] relative" style={{ fontFamily: "var(--font-ui)" }}>
+    <div className="min-h-screen bg-[#030610] relative">
 
       <style>{`
         @keyframes holo-shift {
@@ -1066,21 +1077,45 @@ export default function App() {
           display: block;
           shape-rendering: geometricPrecision;
         }
-        .card-princess-name { font-size: 15px; letter-spacing: 0.16em; }
-        .card-princess-name--medium { font-size: 13px; letter-spacing: 0.12em; }
-        .card-princess-name--long { font-size: 12px; letter-spacing: 0.1em; }
-        .card-princess-name--xlong { font-size: 11px; letter-spacing: 0.06em; }
-        @media (min-width: 1024px) {
-          .card-princess-name { font-size: 16px; letter-spacing: 0.14em; }
-          .card-princess-name--medium { font-size: 15px; letter-spacing: 0.12em; }
-          .card-princess-name--long { font-size: 14px; letter-spacing: 0.1em; }
-          .card-princess-name--xlong { font-size: 13px; letter-spacing: 0.08em; }
-        }
         .card-modal-tilt-scene {
           overflow: visible;
-          padding: 2rem 1.5rem;
-          margin: -2rem -1.5rem;
+          padding: 1.25rem 0.75rem;
+          margin: -1.25rem -0.75rem;
           box-sizing: content-box;
+        }
+        @media (min-width: 640px) {
+          .card-modal-tilt-scene {
+            padding: 2rem 1.5rem;
+            margin: -2rem -1.5rem;
+          }
+        }
+        .modal-card-column {
+          width: 100%;
+          max-width: min(260px, 72vw);
+          margin: 0 auto;
+        }
+        @media (min-width: 1024px) {
+          .modal-card-column {
+            max-width: 260px;
+            margin: 0;
+          }
+        }
+        .modal-scroll {
+          padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        .modal-close-btn {
+          position: fixed;
+          top: max(1rem, env(safe-area-inset-top, 0px));
+          right: max(1rem, env(safe-area-inset-right, 0px));
+          z-index: 60;
+        }
+        @media (min-width: 1024px) {
+          .modal-close-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 20;
+          }
         }
       `}</style>
 
@@ -1101,34 +1136,33 @@ export default function App() {
       </div>
 
       {/* Header */}
-      <header className="relative z-10 text-center pt-10 pb-8">
-        <p className="text-[10px] tracking-[0.5em] text-[#3A4A6A] mb-2 uppercase">
+      <header className="relative z-10 text-center px-4 pt-7 pb-6 sm:pt-10 sm:pb-8">
+        <p className="type-eyebrow type-eyebrow--hero text-[#3A4A6A] mb-2">
           Дворцовая сокровищница
         </p>
-        <h1 className="text-3xl sm:text-5xl font-black tracking-widest"
+        <h1 className="type-display-1"
           style={{
-            fontFamily: "var(--font-display-en)",
             background: "linear-gradient(135deg, #9A8050 0%, #F0D060 35%, #D4AF37 55%, #F0D060 75%, #9A8050 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}>
           Enchanted Vault
         </h1>
-        <p className="mt-3 text-[10px] sm:text-xs tracking-[0.3em] text-[#50608A] uppercase">
+        <p className="type-eyebrow mt-3 text-[#50608A]">
           {CARDS.length} карты · 6 редкостей
         </p>
-        <div className="flex items-center justify-center gap-3 mt-4 opacity-35">
-          <div className="h-px w-28 sm:w-44" style={{ background: "linear-gradient(to right, transparent, #D4AF37)" }} />
+        <div className="flex items-center justify-center gap-2 sm:gap-3 mt-3 sm:mt-4 opacity-35">
+          <div className="h-px w-16 sm:w-28 md:w-44" style={{ background: "linear-gradient(to right, transparent, #D4AF37)" }} />
           <svg width="14" height="14" viewBox="-7 -7 14 14">
             <StarPoly cx={0} cy={0} r={6} n={8} inner={0.5} fill="#D4AF37" opacity={1} />
           </svg>
-          <div className="h-px w-28 sm:w-44" style={{ background: "linear-gradient(to left, transparent, #D4AF37)" }} />
+          <div className="h-px w-16 sm:w-28 md:w-44" style={{ background: "linear-gradient(to left, transparent, #D4AF37)" }} />
         </div>
       </header>
 
       {/* Card grid */}
-      <main className="relative z-10 px-3 sm:px-6 pb-20">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 max-w-[1600px] mx-auto">
+      <main className="relative z-10 px-3 sm:px-5 md:px-6 pb-16 sm:pb-20">
+        <div className="grid grid-cols-2 min-[480px]:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-4 md:gap-5 max-w-[1600px] mx-auto">
           {CARDS.map((card, idx) => (
             <CardTile
               key={idx}
@@ -1151,10 +1185,10 @@ export default function App() {
             </svg>
             <div className="h-px w-16" style={{ background: "linear-gradient(to left, transparent, #D4AF37)" }} />
           </div>
-          <p className="text-[9px] tracking-[0.28em] uppercase font-medium" style={{ color: "#5C6C94" }}>
+          <p className="type-meta" style={{ color: "#5C6C94" }}>
             Серия «Фантастический коллекционер» · Тираж № 001
           </p>
-          <p className="text-[9px] tracking-[0.24em] uppercase mt-1 font-medium" style={{ color: "#465577" }}>
+          <p className="type-meta mt-1" style={{ color: "#465577" }}>
             © 2026 klon008
           </p>
         </div>
