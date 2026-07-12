@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import portraitImg from "@/imports/20260712_062815_flux_Portrait_of_Flounder_from_The_L_ComfyUI_00118_.png";
 import elsaImg from "@/imports/20260712_065927_flux_Portrait_of_Elsa_from_Frozen__c_ComfyUI_00119_.png";
 import auroraImg from "@/imports/editing_result_e6345ab87d3f11f1a0a5cefd6ad41579_1.jpg";
+import megaraImg from "@/imports/0522a2ca-53fe-4d14-8b51-6e42836f38ab.webp";
 
 type RarityKey = "common" | "uncommon" | "rare" | "epic" | "legendary" | "secretRare";
 
@@ -110,7 +111,7 @@ const CARDS: CardDef[] = [
   { princess: "Анна",          rarity: "rare"       },
   { princess: "Нала",          rarity: "common"     },
   { princess: "Эльза",         rarity: "secretRare", portrait: elsaImg },
-  { princess: "Мегара",        rarity: "uncommon"   },
+  { princess: "Мегара",        rarity: "secretRare", portrait: megaraImg },
   { princess: "Эсмеральда",    rarity: "rare"       },
   { princess: "Джейн",         rarity: "common"     },
   { princess: "Мирабель",      rarity: "epic"       },
@@ -213,7 +214,7 @@ const CARD_DETAILS: Record<string, CardDetails> = {
   },
   "Мегара": {
     story: "Острая на язык и яростно самостоятельная, она заключила сделку с тьмой и заплатила цену, которой не ожидала. Но в решающий момент выбрала любовь вместо обещанного бессмертия — и этот выбор сделал её героиней.",
-    booster: "Набор «Хрустальное королевство»",
+    booster: "Коллекция «Падение звёзд» · Призматическое издание",
     obtainedDate: "1 апреля 2025",
   },
   "Эсмеральда": {
