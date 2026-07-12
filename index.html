@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="fonts-loading">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Зачарованный архив — Коллекция принцесс</title>
     <meta name="description" content="Коллекционная галерея карт принцесс: редкости, истории персонажей и зачарованные портреты." />
     <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" />
     <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
+    <script>
+      document.fonts.ready.then(function () {
+        document.documentElement.classList.replace("fonts-loading", "fonts-ready");
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

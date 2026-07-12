@@ -3,9 +3,23 @@ import { motion, AnimatePresence } from "motion/react";
 import portraitImg from "@/imports/20260712_062815_flux_Portrait_of_Flounder_from_The_L_ComfyUI_00118_.png";
 import elsaImg from "@/imports/20260712_065927_flux_Portrait_of_Elsa_from_Frozen__c_ComfyUI_00119_.png";
 import auroraImg from "@/imports/editing_result_e6345ab87d3f11f1a0a5cefd6ad41579_1.jpg";
-import megaraImg from "@/imports/0522a2ca-53fe-4d14-8b51-6e42836f38ab.webp";
+import megaraImg from "@/imports/megara.webp";
+import belleImg from "@/imports/belle.webp";
+import arielImg from "@/imports/ariel.webp";
+import snowWhiteImg from "@/imports/snow-white.webp";
+import rayaImg from "@/imports/raya.webp";
+import rapunzelImg from "@/imports/rapunzel.webp";
+import jasmineImg from "@/imports/jasmine.webp";
+import cinderellaImg from "@/imports/cinderella.webp";
+import moanaImg from "@/imports/moana.webp";
 
 type RarityKey = "common" | "uncommon" | "rare" | "epic" | "legendary" | "secretRare";
+
+const CARD_PERSPECTIVE = 900;
+
+function cardTiltTransform(rx: number, ry: number, scale = 1) {
+  return `rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale}) translate3d(0, 0, 0.01px)`;
+}
 
 interface RC {
   name: string;
@@ -40,29 +54,29 @@ const CFG: Record<RarityKey, RC> = {
     particles: 0, holo: false, cornerLv: 1, bottomGems: 0,
   },
   uncommon: {
-    name: "Uncommon", tier: "◆◆", color: "#72C860",
-    frameW: 14, goldBase: "#B0A060", goldHigh: "#D0BC78",
-    gemMain: "#3A7848", gemAlt: "#2E6038",
+    name: "Uncommon", tier: "◆◆", color: "#7AD868",
+    frameW: 14, goldBase: "#3A9850", goldHigh: "#78D878",
+    gemMain: "#3A9850", gemAlt: "#2E7840",
     bgCenter: "#142238", bgEdge: "#0a1520",
-    glowCol: "#3A784840", glowStr: 8,
+    glowCol: "#48A858", glowStr: 10,
     crown: false, filigree: false, rays: false,
     particles: 8, holo: false, cornerLv: 2, bottomGems: 1,
   },
   rare: {
-    name: "Rare", tier: "◆◆◆", color: "#4888F0",
-    frameW: 17, goldBase: "#D4AF37", goldHigh: "#F0D060",
-    gemMain: "#1A50E8", gemAlt: "#1440CC",
+    name: "Rare", tier: "◆◆◆", color: "#5898FF",
+    frameW: 17, goldBase: "#2868D0", goldHigh: "#78B8FF",
+    gemMain: "#2868D0", gemAlt: "#1858B8",
     bgCenter: "#0e1835", bgEdge: "#070f22",
-    glowCol: "#2050D0", glowStr: 14,
+    glowCol: "#3880F0", glowStr: 16,
     crown: false, filigree: true, rays: false,
     particles: 16, holo: false, cornerLv: 3, bottomGems: 2,
   },
   epic: {
-    name: "Epic", tier: "◆◆◆◆", color: "#9840E8",
-    frameW: 22, goldBase: "#D4AF37", goldHigh: "#FFD700",
-    gemMain: "#7018C8", gemAlt: "#9030E0",
-    bgCenter: "#0f0828", bgEdge: "#080518",
-    glowCol: "#8020C0", glowStr: 20,
+    name: "Epic", tier: "◆◆◆◆", color: "#9070F0",
+    frameW: 22, goldBase: "#5A40A8", goldHigh: "#9888E8",
+    gemMain: "#401090", gemAlt: "#5020A8",
+    bgCenter: "#060318", bgEdge: "#030110",
+    glowCol: "#402898", glowStr: 20,
     crown: false, filigree: true, rays: true,
     particles: 30, holo: false, cornerLv: 4, bottomGems: 3,
   },
@@ -94,19 +108,19 @@ interface CardDef {
 
 // 24 карты — редкости перемешаны для естественного распределения
 const CARDS: CardDef[] = [
-  { princess: "Золушка",       rarity: "common"     },
-  { princess: "Белль",         rarity: "uncommon"   },
-  { princess: "Ариэль",        rarity: "rare"       },
-  { princess: "Белоснежка",    rarity: "common"     },
-  { princess: "Рапунцель",     rarity: "epic"       },
-  { princess: "Жасмин",        rarity: "uncommon"   },
-  { princess: "Моана",         rarity: "rare"       },
+  { princess: "Золушка",       rarity: "common",     portrait: cinderellaImg },
+  { princess: "Белль",         rarity: "uncommon",   portrait: belleImg },
+  { princess: "Ариэль",        rarity: "rare",       portrait: arielImg },
+  { princess: "Белоснежка",    rarity: "common",     portrait: snowWhiteImg },
+  { princess: "Рапунцель",     rarity: "epic",       portrait: rapunzelImg },
+  { princess: "Жасмин",        rarity: "uncommon",   portrait: jasmineImg },
+  { princess: "Моана",         rarity: "rare",       portrait: moanaImg },
   { princess: "Покахонтас",    rarity: "common"     },
   { princess: "Аврора",        rarity: "legendary",  portrait: auroraImg },
   { princess: "Тиана",         rarity: "uncommon"   },
   { princess: "Мерида",        rarity: "rare"       },
   { princess: "Аша",           rarity: "common"     },
-  { princess: "Рая",           rarity: "epic"       },
+  { princess: "Рая",           rarity: "epic",       portrait: rayaImg },
   { princess: "Мулан",         rarity: "uncommon"   },
   { princess: "Анна",          rarity: "rare"       },
   { princess: "Нала",          rarity: "common"     },
@@ -208,7 +222,7 @@ const CARD_DETAILS: Record<string, CardDetails> = {
     obtainedDate: "29 января 2025",
   },
   "Эльза": {
-    story: "Рождённая с силой зимы в руках, она построила ледяное королевство и укрылась в тишине — пока любовь не научила её: она никогда не была тем чудовищем, которого боялась. Её магия — не проклятие. Это корона.",
+    story: "Эльза правила ледяным королевством, не терпя ни возражений, ни жалости. Мороз для неё был не проклятием, а мерой порядка: чувства — во льду, дыхание — под контролем. Угрозы ей были ни к чему — одного взгляда хватало, чтобы тишина сгущалась, словно перед бурей. В её власти не было театральности, лишь непреклонная ледяная воля.",
     booster: "Коллекция «Падение звёзд» · Призматическое издание",
     obtainedDate: "21 июня 2025",
   },
@@ -371,7 +385,7 @@ function CardSVG({ rarity, portrait, princessName }: {
   }, [rarity, princessName, c.particles]);
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible", width: "100%", height: "100%" }}>
+    <svg className="card-svg" viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible", width: "100%", height: "100%" }}>
       <defs>
         <radialGradient id={`bg${uid}`} cx="50%" cy="45%" r="70%">
           <stop offset="0%" stopColor={c.bgCenter} />
@@ -507,9 +521,9 @@ function CardSVG({ rarity, portrait, princessName }: {
       {/* Princess name */}
       <text x={175} y={fw + 30}
         textAnchor="middle" dominantBaseline="middle"
-        fontFamily='"Cinzel", "Spectral", serif'
         fontSize={nameFontSize} fontWeight="700"
-        fill={c.goldHigh} letterSpacing={nameLetterSpacing} opacity="0.95">
+        fill={c.goldHigh} letterSpacing={nameLetterSpacing} opacity="0.95"
+        style={{ fontFamily: "var(--font-ui)" }}>
         {princessName.toUpperCase()}
       </text>
 
@@ -671,11 +685,11 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
     // Outer div: only handles the entry animation (opacity+translateY)
     // It must NOT be the tilt target — otherwise animation fill-mode blocks inline style.transform
     <div className="card-enter" style={{ animationDelay: `${idx * 0.04}s` }}>
-    {/* Inner div: the actual tilt target, no animation applied here */}
+    <div className="card-tilt-scene">
     <div
       ref={tileRef}
-      className="flex flex-col items-center gap-2"
-      style={{ position: "relative", willChange: "transform", cursor: "pointer" }}
+      className="card-tilt-target flex flex-col items-center gap-2"
+      style={{ position: "relative", cursor: "pointer" }}
       onClick={onClick}
     >
       {/* Glow halo */}
@@ -689,7 +703,7 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
       )}
 
       {/* Card art */}
-      <div style={{
+      <div className="card-art" style={{
         width: "100%",
         aspectRatio: "5/7",
         filter: cfg.glowStr > 0
@@ -705,7 +719,7 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
           <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
             style={{ background: cfg.color, boxShadow: `0 0 5px ${cfg.color}` }} />
           <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.18em] uppercase"
-            style={{ color: cfg.color, fontFamily: '"Cinzel", "Spectral", serif' }}>
+            style={{ color: cfg.color, fontFamily: "var(--font-label-en)" }}>
             {cfg.name}
           </span>
         </div>
@@ -713,6 +727,7 @@ function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: {
           {cfg.tier}
         </span>
       </div>
+    </div>
     </div>
     </div>
   );
@@ -737,7 +752,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
     const dy = e.clientY - cy;
     const rx = -(dy / (rect.height / 2)) * 12;
     const ry =  (dx / (rect.width  / 2)) * 12;
-    el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.03)`;
+    el.style.transform = cardTiltTransform(rx, ry, 1.03);
   };
   const onCardMouseLeave = () => {
     const el = modalCardRef.current;
@@ -761,7 +776,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+      className="fixed inset-0 z-50 overflow-y-auto overscroll-contain"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -769,26 +784,28 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
       onClick={onClose}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0" style={{ background: "rgba(1,2,8,0.88)", backdropFilter: "blur(8px)" }} />
+      <div className="absolute inset-0 min-h-full" style={{ background: "rgba(1,2,8,0.88)", backdropFilter: "blur(8px)" }} />
 
-      {/* Panel */}
+      {/* Panel wrapper — scroll lives here; card tilt must not be clipped */}
+      <div className="relative z-10 flex min-h-full items-center justify-center p-4 sm:p-8 pointer-events-none">
       <motion.div
-        className="relative z-10 flex flex-col lg:flex-row gap-6 lg:gap-10 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
-        initial={{ opacity: 0, scale: 0.92, y: 24 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 16 }}
+        className="relative flex flex-col lg:flex-row gap-6 lg:gap-10 w-full max-w-4xl overflow-visible pointer-events-auto"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 16 }}
         transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
         onClick={e => e.stopPropagation()}
       >
         {/* ── LEFT: card ── */}
-        <div className="flex-shrink-0 flex flex-col items-center lg:items-start gap-4"
+        <div className="flex-shrink-0 flex flex-col items-center lg:items-start gap-4 overflow-visible"
           style={{ width: "100%", maxWidth: 260, margin: "0 auto" }}>
+          <div className="card-tilt-scene card-modal-tilt-scene" style={{ width: "100%" }}>
           <div
             ref={modalCardRef}
+            className="card-tilt-target"
             style={{
               width: "100%",
               aspectRatio: "5/7",
-              willChange: "transform",
               transition: "transform 0.08s linear",
               filter: cfg.glowStr > 0
                 ? `drop-shadow(0 0 ${cfg.glowStr * 0.55}px ${cfg.glowCol}80)`
@@ -799,13 +816,14 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           >
             <CardSVG rarity={card.rarity} portrait={portrait} princessName={card.princess} />
           </div>
+          </div>
 
           {/* Rarity badge under card */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
             style={{ border: `1px solid ${cfg.color}40`, background: `${cfg.color}12` }}>
             <div className="w-2 h-2 rounded-full" style={{ background: cfg.color, boxShadow: `0 0 6px ${cfg.color}` }} />
             <span className="text-xs font-bold tracking-widest uppercase"
-              style={{ color: cfg.color, fontFamily: '"Cinzel", "Spectral", serif' }}>
+              style={{ color: cfg.color, fontFamily: "var(--font-label-en)" }}>
               {cfg.name}
             </span>
             <span className="text-xs ml-1" style={{ color: cfg.color, opacity: 0.55 }}>{cfg.tier}</span>
@@ -813,16 +831,16 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
         </div>
 
         {/* ── RIGHT: info ── */}
-        <div className="flex-1 flex flex-col gap-5 min-w-0">
+        <div className="flex-1 flex flex-col gap-5 min-w-0 overflow-y-auto overscroll-contain lg:max-h-[calc(90vh-4rem)]">
           {/* Header */}
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-[10px] tracking-[0.4em] mb-1 uppercase" style={{ color: "#4A5A7A" }}>
+              <p className="text-[10px] tracking-[0.3em] mb-1.5 uppercase font-semibold" style={{ color: "#8494BC" }}>
                 Коллекция принцесс
               </p>
               <h2 className="text-2xl sm:text-3xl font-black tracking-widest"
                 style={{
-                  fontFamily: '"Cinzel Decorative", "Spectral", serif',
+                  fontFamily: "var(--font-ui)",
                   background: `linear-gradient(135deg, ${cfg.goldBase ?? "#9A8050"}, ${cfg.goldHigh ?? "#F0D060"}, ${cfg.goldBase ?? "#9A8050"})`,
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -847,11 +865,11 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
 
           {/* Story */}
           <div>
-            <p className="text-[10px] tracking-[0.35em] uppercase mb-3" style={{ color: "#4A5A7A" }}>
+            <p className="text-[10px] tracking-[0.28em] uppercase mb-3 font-semibold" style={{ color: "#8494BC" }}>
               История персонажа
             </p>
             <p className="text-sm sm:text-base leading-relaxed"
-              style={{ color: "#C8CEDC", fontFamily: '"IM Fell English", "Lora", serif', fontStyle: "italic", lineHeight: 1.85 }}>
+              style={{ color: "#D8DCE8", fontFamily: "var(--font-story)", fontStyle: "italic", lineHeight: 1.85 }}>
               {details?.story ?? "Легендарная героиня, чья история ещё не полностью раскрыта."}
             </p>
           </div>
@@ -862,28 +880,28 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           {/* Acquisition info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl p-4" style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.15)" }}>
-              <p className="text-[9px] tracking-[0.35em] uppercase mb-1.5" style={{ color: "#4A5A7A" }}>Бустер-пак</p>
+              <p className="text-[9px] tracking-[0.24em] uppercase mb-2 font-semibold" style={{ color: "#8494BC" }}>Бустер-пак</p>
               <div className="flex items-center gap-2">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="flex-shrink-0">
                   <rect x="1" y="3" width="12" height="9" rx="1.5" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M4 3V2a3 3 0 016 0v1" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                   <path d="M5 7h4M7 5v4" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", "Spectral", serif' }}>
+                <span className="text-sm font-semibold leading-snug" style={{ color: "#F0D882", fontFamily: "var(--font-ui)" }}>
                   {details?.booster ?? "Неизвестный набор"}
                 </span>
               </div>
             </div>
 
             <div className="rounded-xl p-4" style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.15)" }}>
-              <p className="text-[9px] tracking-[0.35em] uppercase mb-1.5" style={{ color: "#4A5A7A" }}>Дата получения</p>
+              <p className="text-[9px] tracking-[0.24em] uppercase mb-2 font-semibold" style={{ color: "#8494BC" }}>Дата получения</p>
               <div className="flex items-center gap-2">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="flex-shrink-0">
                   <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M1 6h12" stroke="#D4AF37" strokeWidth="1.2"/>
                   <path d="M4 1v3M10 1v3" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-xs font-semibold" style={{ color: "#D4AF37", fontFamily: '"Cinzel", "Spectral", serif' }}>
+                <span className="text-sm font-semibold leading-snug" style={{ color: "#F0D882", fontFamily: "var(--font-ui)" }}>
                   {details?.obtainedDate ?? "Неизвестно"}
                 </span>
               </div>
@@ -891,11 +909,12 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
           </div>
 
           {/* Card number */}
-          <p className="text-[9px] tracking-[0.3em] uppercase text-right" style={{ color: "#252E42" }}>
+          <p className="text-[9px] tracking-[0.24em] uppercase text-right font-medium" style={{ color: "#5C6C94" }}>
             Серия «Фантастический коллекционер» · № {String(CARDS.findIndex(c => c.princess === card.princess) + 1).padStart(3, "0")} / {String(CARDS.length).padStart(3, "0")}
           </p>
         </div>
       </motion.div>
+      </div>
     </motion.div>
   );
 }
@@ -946,7 +965,7 @@ export default function App() {
           const ry =  (dx / d) * strength;
           const scale = 1 + t * MAX_SCALE;
           el.style.transition = "transform 0.06s linear";
-          el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale})`;
+          el.style.transform = cardTiltTransform(rx, ry, scale);
           el.style.zIndex = "10";
         } else {
           el.style.transition = "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)";
@@ -966,7 +985,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#030610] relative" style={{ fontFamily: '"Cinzel", "Spectral", serif' }}>
+    <div className="min-h-screen bg-[#030610] relative" style={{ fontFamily: "var(--font-ui)" }}>
 
       <style>{`
         @keyframes holo-shift {
@@ -983,7 +1002,34 @@ export default function App() {
           from { opacity: 0; transform: translateY(20px) scale(0.97); }
           to   { opacity: 1; transform: translateY(0)   scale(1); }
         }
-        .card-enter { animation: card-rise 0.55s ease-out both; }
+
+        .card-tilt-scene {
+          perspective: ${CARD_PERSPECTIVE}px;
+          perspective-origin: center center;
+        }
+        .card-tilt-target {
+          will-change: transform;
+          transform-style: preserve-3d;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          transform: translate3d(0, 0, 0);
+        }
+        .card-art,
+        .card-svg {
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          transform: translate3d(0, 0, 0);
+        }
+        .card-svg {
+          display: block;
+          shape-rendering: geometricPrecision;
+        }
+        .card-modal-tilt-scene {
+          overflow: visible;
+          padding: 2rem 1.5rem;
+          margin: -2rem -1.5rem;
+          box-sizing: content-box;
+        }
       `}</style>
 
       {/* Star field */}
@@ -1009,7 +1055,7 @@ export default function App() {
         </p>
         <h1 className="text-3xl sm:text-5xl font-black tracking-widest"
           style={{
-            fontFamily: '"Cinzel Decorative", "Spectral", serif',
+            fontFamily: "var(--font-display-en)",
             background: "linear-gradient(135deg, #9A8050 0%, #F0D060 35%, #D4AF37 55%, #F0D060 75%, #9A8050 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -1053,10 +1099,10 @@ export default function App() {
             </svg>
             <div className="h-px w-16" style={{ background: "linear-gradient(to left, transparent, #D4AF37)" }} />
           </div>
-          <p className="text-[9px] tracking-[0.4em] uppercase" style={{ color: "#1E2840" }}>
+          <p className="text-[9px] tracking-[0.28em] uppercase font-medium" style={{ color: "#5C6C94" }}>
             Серия «Фантастический коллекционер» · Тираж № 001
           </p>
-          <p className="text-[9px] tracking-[0.3em] uppercase mt-1" style={{ color: "#2A3654" }}>
+          <p className="text-[9px] tracking-[0.24em] uppercase mt-1 font-medium" style={{ color: "#465577" }}>
             © 2026 klon008
           </p>
         </div>
