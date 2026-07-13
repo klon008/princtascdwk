@@ -30,6 +30,18 @@ import pascalImg from "@/imports/pascal.webp";
 
 type RarityKey = "common" | "uncommon" | "rare" | "epic" | "legendary" | "secretRare";
 
+/** Число + существительное: формы [1, 2–4, 5+] — «1 карта», «27 карт», «6 редкостей». */
+function ruCount(n: number, forms: [one: string, few: string, many: string]): string {
+  const abs = Math.abs(n) % 100;
+  const d = abs % 10;
+  const word =
+    abs > 10 && abs < 20 ? forms[2]
+    : d === 1 ? forms[0]
+    : d >= 2 && d <= 4 ? forms[1]
+    : forms[2];
+  return `${n} ${word}`;
+}
+
 const CARD_PERSPECTIVE = 900;
 
 function cardTiltTransform(rx: number, ry: number, scale = 1) {
@@ -1149,7 +1161,7 @@ export default function App() {
           Enchanted Vault
         </h1>
         <p className="type-eyebrow mt-3 text-[#50608A]">
-          {CARDS.length} карты · 6 редкостей
+          {ruCount(CARDS.length, ["карта", "карты", "карт"])} · {ruCount(Object.keys(CFG).length, ["редкость", "редкости", "редкостей"])}
         </p>
         <div className="flex items-center justify-center gap-2 sm:gap-3 mt-3 sm:mt-4 opacity-35">
           <div className="h-px w-16 sm:w-28 md:w-44" style={{ background: "linear-gradient(to right, transparent, #D4AF37)" }} />
