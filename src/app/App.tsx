@@ -2,6 +2,7 @@ import { useMemo, useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import flounderImg from "@/imports/flounder.webp";
 import queenElsaImg from "@/imports/queen-elsa.webp";
+import elsaImg from "@/imports/elsa.webp";
 import auroraImg from "@/imports/aurora.webp";
 import megaraImg from "@/imports/megara.webp";
 import belleImg from "@/imports/belle.webp";
@@ -27,8 +28,18 @@ import kidaImg from "@/imports/kida.webp";
 import annaImg from "@/imports/anna.webp";
 import olafImg from "@/imports/olaf.webp";
 import pascalImg from "@/imports/pascal.webp";
+import { fetchAlbum, type AlbumResponse } from "@/lib/albumApi";
+import { getCatalogEntry, catalogIndex, CATALOG_ORDER } from "@/lib/cardCatalog";
 
-type RarityKey = "common" | "uncommon" | "rare" | "epic" | "legendary" | "secretRare";
+type AlbumViewState =
+  | "landing"
+  | "loading"
+  | "album"
+  | "offline"
+  | "unauthorized"
+  | "not_found";
+
+type RarityKey = "common" | "uncommon" | "rare" | "epic" | "legendary" | "mythic" | "secretRare";
 
 /** Число + существительное: формы [1, 2–4, 5+] — «1 карта», «27 карт», «6 редкостей». */
 function ruCount(n: number, forms: [one: string, few: string, many: string]): string {
@@ -66,6 +77,7 @@ interface RC {
   rays: boolean;
   particles: number;
   holo: boolean;
+  mythic?: boolean;
   cornerLv: number;
   bottomGems: number;
 }
@@ -116,6 +128,15 @@ const CFG: Record<RarityKey, RC> = {
     crown: true, filigree: true, rays: true,
     particles: 50, holo: false, cornerLv: 5, bottomGems: 5,
   },
+  mythic: {
+    name: "Mythic", tier: "✦", color: "#660f00",
+    frameW: 24, goldBase: "#2A0800", goldHigh: "#8A2410",
+    gemMain: "#660f00", gemAlt: "#3A0A00",
+    bgCenter: "#0c0201", bgEdge: "#050100",
+    glowCol: "#660f00", glowStr: 20,
+    crown: true, filigree: true, rays: true,
+    particles: 50, holo: false, mythic: true, cornerLv: 6, bottomGems: 6,
+  },
   secretRare: {
     name: "Secret Rare", tier: "★", color: "#D4567A",
     frameW: 30, goldBase: "#FFD700", goldHigh: "#FFF080",
@@ -131,9 +152,12 @@ interface CardDef {
   princess: string;
   rarity: RarityKey;
   portrait?: string;
+  obtainedDate?: string;
+  booster?: string;
+  slug?: string;
 }
 
-// 27 карт — редкости перемешаны для естественного распределения
+// 28 карт — редкости перемешаны для естественного распределения
 const CARDS: CardDef[] = [
   { princess: "Золушка",       rarity: "common",     portrait: cinderellaImg },
   { princess: "Белль",         rarity: "uncommon",   portrait: belleImg },
@@ -162,6 +186,7 @@ const CARDS: CardDef[] = [
   { princess: "Флаундер",      rarity: "common",     portrait: flounderImg },
   { princess: "Олаф",          rarity: "common",     portrait: olafImg },
   { princess: "Паскаль",       rarity: "common",     portrait: pascalImg },
+  { princess: "Эльза",         rarity: "mythic",     portrait: elsaImg },
 ];
 
 interface CardDetails {
@@ -309,6 +334,11 @@ const CARD_DETAILS: Record<string, CardDetails> = {
     booster: FIRST_EDITION_BOOSTER,
     obtainedDate: COLLECTION_START_DATE,
   },
+  "Эльза": {
+    story: "Эльза - королева льда, научившаяся слышать голос своей магии: в её спокойствии прячется несокрушимая воля, а в холоде - защита для тех, кто ей дорог.",
+    booster: FIRST_EDITION_BOOSTER,
+    obtainedDate: COLLECTION_START_DATE,
+  },
 };
 
 const srng = (n: number) => {
@@ -403,13 +433,13 @@ function CornerGroup({ lv, gold, goldH, gem, gemAlt }: {
 
 // ─── Card SVG ─────────────────────────────────────────────────────────────────
 
-function CardSVG({ rarity, portrait, princessName }: {
-  rarity: RarityKey; portrait: string; princessName: string;
+function CardSVG({ rarity, portrait, princessName, mythicVariant = 1 }: {
+  rarity: RarityKey; portrait: string; princessName: string; mythicVariant?: number;
 }) {
   const c = CFG[rarity];
   const W = 350, H = 490;
   const fw = c.frameW;
-  const uid = rarity + princessName.replace(/\s/g, "");
+  const uid = rarity + princessName.replace(/\s/g, "") + (c.mythic ? `v${mythicVariant}` : "");
 
   const imgX = 20, imgY = 80, imgW = 310, imgH = 330;
   const bpY = imgY + imgH + 6;
@@ -430,6 +460,19 @@ function CardSVG({ rarity, portrait, princessName }: {
     return pts;
   }, [rarity, princessName, c.particles]);
 
+  const emberList = useMemo(() => {
+    if (!c.mythic) return [];
+    const seed = rarity.charCodeAt(0) + princessName.charCodeAt(0);
+    return Array.from({ length: 26 }, (_, i) => ({
+      x: 12 + srng(i * 5 + seed) * (W - 24),
+      y: 120 + srng(i * 5 + 1 + seed) * (H - 130),
+      r: 0.7 + srng(i * 5 + 2 + seed) * 1.6,
+      dur: 2.4 + srng(i * 5 + 3 + seed) * 2.8,
+      delay: srng(i * 5 + 4 + seed) * 4,
+      drift: (srng(i * 5 + seed) - 0.5) * 26,
+    }));
+  }, [rarity, princessName, c.mythic]);
+
   return (
     <svg className="card-svg" viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible", width: "100%", height: "100%" }}>
       <defs>
@@ -449,6 +492,26 @@ function CardSVG({ rarity, portrait, princessName }: {
           <stop offset="50%" stopColor={c.goldBase} />
           <stop offset="100%" stopColor={c.goldHigh} />
         </linearGradient>
+        {c.mythic && (
+          <>
+            {/* Outer rim — deep scorched metal */}
+            <linearGradient id={`mfo${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#661800" />
+              <stop offset="22%" stopColor="#1A0500" />
+              <stop offset="50%" stopColor="#4A1000" />
+              <stop offset="78%" stopColor="#1A0500" />
+              <stop offset="100%" stopColor="#661800" />
+            </linearGradient>
+            {/* Inner track — muted ember */}
+            <linearGradient id={`mfi${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#8A2810" />
+              <stop offset="30%" stopColor="#5A1204" />
+              <stop offset="55%" stopColor="#9A3014" />
+              <stop offset="80%" stopColor="#5A1204" />
+              <stop offset="100%" stopColor="#8A2810" />
+            </linearGradient>
+          </>
+        )}
         {c.glowStr > 0 && (
           <filter id={`glw${uid}`} x="-40%" y="-40%" width="180%" height="180%">
             <feGaussianBlur in="SourceGraphic" stdDeviation={c.glowStr / 3} result="blur" />
@@ -518,18 +581,45 @@ function CardSVG({ rarity, portrait, princessName }: {
       )}
 
       {/* Frame */}
-      <rect x={fw / 2} y={fw / 2} width={W - fw} height={H - fw} rx={16 - fw / 4}
-        fill="none" stroke={`url(#gv${uid})`} strokeWidth={fw} />
-      <rect x="1" y="1" width={W - 2} height={H - 2} rx="15.5"
-        fill="none" stroke={c.goldHigh} strokeWidth="0.5" opacity="0.5" />
-      <rect x={fw + 1} y={fw + 1} width={W - fw * 2 - 2} height={H - fw * 2 - 2} rx={13 - fw / 4}
-        fill="none" stroke={c.goldHigh} strokeWidth="0.75" opacity="0.6" />
-      {c.cornerLv >= 4 && (
+      {c.mythic ? (
         <>
+          {/* Outer metal rim */}
+          <rect x={fw / 2} y={fw / 2} width={W - fw} height={H - fw} rx={16 - fw / 4}
+            fill="none" stroke={`url(#mfo${uid})`} strokeWidth={fw} />
+          {/* Dark groove between outer & inner */}
+          <rect x={fw / 2} y={fw / 2} width={W - fw} height={H - fw} rx={16 - fw / 4}
+            fill="none" stroke="#120200" strokeWidth={fw * 0.42} opacity="0.85" />
+          {/* Inner molten track */}
+          <rect x={fw / 2} y={fw / 2} width={W - fw} height={H - fw} rx={16 - fw / 4}
+            fill="none" stroke={`url(#mfi${uid})`} strokeWidth={fw * 0.22} />
+          {/* Card edge highlight */}
+          <rect x="1" y="1" width={W - 2} height={H - 2} rx="15.5"
+            fill="none" stroke="#8A2810" strokeWidth="0.6" opacity="0.4" />
+          {/* Inner plate edge */}
+          <rect x={fw + 1} y={fw + 1} width={W - fw * 2 - 2} height={H - fw * 2 - 2} rx={13 - fw / 4}
+            fill="none" stroke="#9A3014" strokeWidth="0.85" opacity="0.5" />
+          {/* Outer / inner fine rails */}
           <rect x={fw / 2 - 3} y={fw / 2 - 3} width={W - fw + 6} height={H - fw + 6} rx={18}
-            fill="none" stroke={c.goldBase} strokeWidth="0.5" opacity="0.35" />
+            fill="none" stroke="#4A1000" strokeWidth="0.55" opacity="0.4" />
           <rect x={fw + 5} y={fw + 5} width={W - fw * 2 - 10} height={H - fw * 2 - 10} rx={11}
-            fill="none" stroke={c.goldBase} strokeWidth="0.5" opacity="0.35" />
+            fill="none" stroke="#661000" strokeWidth="0.55" opacity="0.35" />
+        </>
+      ) : (
+        <>
+          <rect x={fw / 2} y={fw / 2} width={W - fw} height={H - fw} rx={16 - fw / 4}
+            fill="none" stroke={`url(#gv${uid})`} strokeWidth={fw} />
+          <rect x="1" y="1" width={W - 2} height={H - 2} rx="15.5"
+            fill="none" stroke={c.goldHigh} strokeWidth="0.5" opacity="0.5" />
+          <rect x={fw + 1} y={fw + 1} width={W - fw * 2 - 2} height={H - fw * 2 - 2} rx={13 - fw / 4}
+            fill="none" stroke={c.goldHigh} strokeWidth="0.75" opacity="0.6" />
+          {c.cornerLv >= 4 && (
+            <>
+              <rect x={fw / 2 - 3} y={fw / 2 - 3} width={W - fw + 6} height={H - fw + 6} rx={18}
+                fill="none" stroke={c.goldBase} strokeWidth="0.5" opacity="0.35" />
+              <rect x={fw + 5} y={fw + 5} width={W - fw * 2 - 10} height={H - fw * 2 - 10} rx={11}
+                fill="none" stroke={c.goldBase} strokeWidth="0.5" opacity="0.35" />
+            </>
+          )}
         </>
       )}
       {c.glowStr > 0 && (
@@ -711,7 +801,350 @@ function CardSVG({ rarity, portrait, princessName }: {
             style={{ mixBlendMode: "screen" as React.CSSProperties["mixBlendMode"] }} />
         </g>
       )}
+
+      {c.mythic && (
+        <MythicFX uid={uid} W={W} H={H} fw={fw}
+          imgX={imgX} imgY={imgY} imgW={imgW} imgH={imgH} embers={emberList} />
+      )}
     </svg>
+  );
+}
+
+interface Ember { x: number; y: number; r: number; dur: number; delay: number; drift: number; }
+
+function MythicFX({ uid, W, H, fw, imgX, imgY, imgW, imgH, embers }: {
+  uid: string; W: number; H: number; fw: number;
+  imgX: number; imgY: number; imgW: number; imgH: number; embers: Ember[];
+}) {
+  const screen = { mixBlendMode: "screen" as React.CSSProperties["mixBlendMode"] };
+  const clip = `url(#cc${uid})`;
+  const pcx = imgX + imgW / 2;
+  const pcy = imgY + imgH / 2;
+
+  return (
+    <g pointerEvents="none">
+      <defs>
+        <radialGradient id={`meb${uid}`} cx="50%" cy="100%" r="60%">
+          <stop offset="0%" stopColor="#661000" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#2A0500" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={`msw${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#050000" />
+          <stop offset="12%" stopColor="#3A0800" />
+          <stop offset="26%" stopColor="#661000" />
+          <stop offset="38%" stopColor="#8A1C08" />
+          <stop offset="48%" stopColor="#5A1000" />
+          <stop offset="56%" stopColor="#8A1C08" />
+          <stop offset="70%" stopColor="#661000" />
+          <stop offset="85%" stopColor="#2A0600" />
+          <stop offset="100%" stopColor="#050000" />
+        </linearGradient>
+        <mask id={`fmask${uid}`}>
+          <rect x="0" y="0" width={W} height={H} rx="16" fill="white" />
+          <rect x={fw + 1} y={fw + 1} width={W - fw * 2 - 2} height={H - fw * 2 - 2} rx="10" fill="black" />
+        </mask>
+      </defs>
+
+      <g clipPath={clip}>
+        <g className="mythic-seal-cw" style={{ transformOrigin: `${pcx}px ${pcy}px` }}>
+          <circle cx={pcx} cy={pcy} r={imgW * 0.51}
+            fill="none" stroke="#661000" strokeWidth="0.5" strokeDasharray="6 10" opacity="0.12" />
+        </g>
+        <g className="mythic-seal-ccw" style={{ transformOrigin: `${pcx}px ${pcy}px` }}>
+          <circle cx={pcx} cy={pcy} r={imgW * 0.38}
+            fill="none" stroke="#8A1C08" strokeWidth="0.6" strokeDasharray="4 16" opacity="0.14" />
+        </g>
+      </g>
+
+      <g mask={`url(#fmask${uid})`} style={screen}>
+        <g className="mythic-sweep" style={{ transformOrigin: `${W / 2}px ${H / 2}px` }}>
+          <rect x="-500" y="-500" width="1350" height="1490" fill={`url(#msw${uid})`} opacity="0.55" />
+        </g>
+      </g>
+
+      <g clipPath={clip} style={screen}>
+        <rect x={fw + 1} y={fw + 1} width={W - fw * 2 - 2} height={H - fw * 2 - 2} rx="10"
+          fill="none" stroke="#661000" strokeWidth="2.5" className="mythic-frame-pulse" />
+      </g>
+
+      <g clipPath={clip} style={screen}>
+        <rect x="0" y={H * 0.72} width={W} height={H * 0.28}
+          fill={`url(#meb${uid})`} className="mythic-pool" />
+      </g>
+
+      <g clipPath={clip} style={screen}>
+        {embers.slice(0, 10).map((e, i) => {
+          const startY = imgY + imgH - 30 + (e.y % 60);
+          return (
+            <circle key={i} cx={e.x} cy={startY} r={e.r * 0.7}
+              fill={e.r > 1.4 ? "#8A1C08" : "#661000"}
+              className="mythic-ember"
+              style={{
+                ["--dur" as string]: `${e.dur * 0.65}s`,
+                ["--delay" as string]: `${e.delay}s`,
+                ["--drift" as string]: `${e.drift * 0.45}px`,
+              }} />
+          );
+        })}
+      </g>
+    </g>
+  );
+}
+
+// ─── Card back (рубашка) ──────────────────────────────────────────────────────
+
+function CardBackSVG() {
+  const W = 350, H = 490;
+  const fw = 20;
+  const mx = 175, my = 248;
+
+  const starPath = (cx: number, cy: number, r: number, inner: number, n: number) => {
+    const pts: string[] = [];
+    for (let i = 0; i < n * 2; i++) {
+      const angle = (i * Math.PI) / n - Math.PI / 2;
+      const rr = i % 2 === 0 ? r : r * inner;
+      pts.push(`${cx + rr * Math.cos(angle)},${cy + rr * Math.sin(angle)}`);
+    }
+    return `M ${pts.join(" L ")} Z`;
+  };
+
+  return (
+    <svg className="card-svg" viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" style={{ display: "block" }}>
+      <defs>
+        <radialGradient id="bk-bg" cx="50%" cy="44%" r="68%">
+          <stop offset="0%" stopColor="#0D1B3E" />
+          <stop offset="60%" stopColor="#06102A" />
+          <stop offset="100%" stopColor="#020810" />
+        </radialGradient>
+        <linearGradient id="bk-gv" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#7A6030" />
+          <stop offset="22%" stopColor="#F0D060" />
+          <stop offset="50%" stopColor="#D4AF37" />
+          <stop offset="78%" stopColor="#F0D060" />
+          <stop offset="100%" stopColor="#7A6030" />
+        </linearGradient>
+        <radialGradient id="bk-mf" cx="50%" cy="42%" r="58%">
+          <stop offset="0%" stopColor="#1A2860" />
+          <stop offset="100%" stopColor="#06102A" />
+        </radialGradient>
+        <radialGradient id="bk-mg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#D4AF37" stopOpacity="0" />
+        </radialGradient>
+        <clipPath id="bk-clip">
+          <rect x="0" y="0" width={W} height={H} rx="16" />
+        </clipPath>
+        <filter id="bk-mglow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="9" />
+        </filter>
+        <filter id="bk-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <pattern id="bk-pat" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+          <path d="M15 3 L16 14 L27 15 L16 16 L15 27 L14 16 L3 15 L14 14 Z"
+            fill="#D4AF37" opacity="0.038" />
+          <circle cx="0" cy="0" r="1.1" fill="#D4AF37" opacity="0.03" />
+          <circle cx="30" cy="0" r="1.1" fill="#D4AF37" opacity="0.03" />
+          <circle cx="0" cy="30" r="1.1" fill="#D4AF37" opacity="0.03" />
+          <circle cx="30" cy="30" r="1.1" fill="#D4AF37" opacity="0.03" />
+        </pattern>
+      </defs>
+
+      <rect x="0" y="0" width={W} height={H} rx="16" fill="url(#bk-bg)" />
+      <rect x="0" y="0" width={W} height={H} rx="16" fill="url(#bk-pat)" clipPath="url(#bk-clip)" />
+
+      <g clipPath="url(#bk-clip)" opacity="0.032">
+        {Array.from({ length: 20 }, (_, i) => {
+          const a = (i * 18) * Math.PI / 180;
+          return <line key={i} x1={mx} y1={my}
+            x2={mx + 420 * Math.cos(a)} y2={my + 420 * Math.sin(a)}
+            stroke="#D4AF37" strokeWidth="2" />;
+        })}
+      </g>
+
+      <circle cx={mx} cy={my} r="138" fill="url(#bk-mg)" filter="url(#bk-mglow)" />
+      <circle cx={mx} cy={my} r="112" fill="none" stroke="#D4AF37" strokeWidth="0.6" opacity="0.28" />
+      <circle cx={mx} cy={my} r="108" fill="none" stroke="#F0D060" strokeWidth="1.2" opacity="0.45" />
+      <circle cx={mx} cy={my} r="105" fill="none" stroke="#9A8050" strokeWidth="0.5" opacity="0.25" />
+
+      {Array.from({ length: 24 }, (_, i) => {
+        const a = (i * 15 - 90) * Math.PI / 180;
+        const r1 = 108, r2 = i % 3 === 0 ? 100 : i % 3 === 1 ? 104 : 106;
+        const sw = i % 6 === 0 ? 1.6 : 0.7;
+        return <line key={i}
+          x1={mx + r1 * Math.cos(a)} y1={my + r1 * Math.sin(a)}
+          x2={mx + r2 * Math.cos(a)} y2={my + r2 * Math.sin(a)}
+          stroke="#D4AF37" strokeWidth={sw} opacity="0.55" />;
+      })}
+
+      {Array.from({ length: 8 }, (_, i) => {
+        const a = (i * 45 - 90) * Math.PI / 180;
+        const gx = mx + 108 * Math.cos(a);
+        const gy = my + 108 * Math.sin(a);
+        return (
+          <g key={i} transform={`translate(${gx},${gy}) rotate(${i * 45})`}>
+            <polygon points="0,-5.5 3.2,0 0,5.5 -3.2,0" fill="#1A44CC" stroke="#F0D060" strokeWidth="0.8" />
+            <polygon points="0,-3 2,0 0,3 -2,0" fill="#4878FF" opacity="0.6" />
+          </g>
+        );
+      })}
+
+      <circle cx={mx} cy={my} r="90" fill="none" stroke="#D4AF37" strokeWidth="1.4" opacity="0.55" />
+      <circle cx={mx} cy={my} r="86" fill="none" stroke="#F0D060" strokeWidth="0.5" opacity="0.3" />
+
+      {Array.from({ length: 8 }, (_, i) => {
+        const a = (i * 45 - 67.5) * Math.PI / 180;
+        const gx = mx + 90 * Math.cos(a);
+        const gy = my + 90 * Math.sin(a);
+        return <circle key={i} cx={gx} cy={gy} r="2.8" fill="#D4AF37" opacity="0.6" />;
+      })}
+
+      <path d={starPath(mx, my, 80, 0.44, 8)} fill="url(#bk-mf)" />
+      <path d={starPath(mx, my, 80, 0.44, 8)} fill="none" stroke="#D4AF37" strokeWidth="1.4" opacity="0.7" />
+      <path d={starPath(mx, my, 80, 0.44, 8)} fill="none" stroke="#F0D060" strokeWidth="0.5" opacity="0.35" />
+
+      <circle cx={mx} cy={my} r="44" fill="#060E26" opacity="0.85" />
+      <circle cx={mx} cy={my} r="44" fill="none" stroke="#D4AF37" strokeWidth="1" opacity="0.55" />
+      <circle cx={mx} cy={my} r="40" fill="none" stroke="#9A8050" strokeWidth="0.5" opacity="0.35" />
+
+      <g transform={`translate(${mx},${my - 4})`} filter="url(#bk-glow)">
+        <rect x="-19" y="10" width="38" height="8" rx="2" fill="#D4AF37" stroke="#F0D060" strokeWidth="0.5" />
+        {[-12, -5, 0, 5, 12].map((bx, i) => (
+          <circle key={i} cx={bx} cy="14" r="1.6" fill="#F0D060" opacity="0.75" />
+        ))}
+        <path d="M -13,10 L -9,10 L -7,-2 L -13,-7 L -16,-2 Z" fill="#C8A030" stroke="#F0D060" strokeWidth="0.4" />
+        <path d="M -5,10 L 5,10 L 4,-2 L 0,-17 L -4,-2 Z" fill="#D4AF37" stroke="#F0D060" strokeWidth="0.5" />
+        <path d="M 9,10 L 13,10 L 16,-2 L 13,-7 L 7,-2 Z" fill="#C8A030" stroke="#F0D060" strokeWidth="0.4" />
+        <polygon points="-13,-7 -10,-7 -11,-11 -14,-11" fill="#2244BB" stroke="#F0D060" strokeWidth="0.4" />
+        <polygon points="-3,-17 3,-17 4,-22 0,-24 -4,-22" fill="#CC00BB" stroke="#F0D060" strokeWidth="0.5" />
+        <polygon points="10,-11 13,-11 14,-7 11,-7" fill="#2244BB" stroke="#F0D060" strokeWidth="0.4" />
+      </g>
+
+      {[0, 90, 180, 270].map((deg, i) => {
+        const rad = (deg - 90) * Math.PI / 180;
+        const px = mx + 80 * Math.cos(rad);
+        const py = my + 80 * Math.sin(rad);
+        return (
+          <g key={i} transform={`translate(${px},${py}) rotate(${deg})`} opacity="0.7">
+            <line x1="0" y1="0" x2="0" y2="8" stroke="#D4AF37" strokeWidth="1.2" />
+            <circle cx="0" cy="11" r="3" fill="#D4AF37" />
+            <circle cx="0" cy="11" r="1.5" fill="#F0D060" />
+          </g>
+        );
+      })}
+
+      <rect x={fw / 2} y={fw / 2} width={W - fw} height={H - fw} rx={13}
+        fill="none" stroke="url(#bk-gv)" strokeWidth={fw} />
+      <rect x="1" y="1" width={W - 2} height={H - 2} rx="15.5"
+        fill="none" stroke="#F0D060" strokeWidth="0.5" opacity="0.45" />
+      <rect x={fw + 1} y={fw + 1} width={W - fw * 2 - 2} height={H - fw * 2 - 2} rx="10"
+        fill="none" stroke="#F0D060" strokeWidth="0.7" opacity="0.5" />
+      <rect x={fw - 3} y={fw - 3} width={W - fw * 2 + 6} height={H - fw * 2 + 6} rx="15"
+        fill="none" stroke="#9A8050" strokeWidth="0.5" opacity="0.3" />
+      <rect x={fw + 5} y={fw + 5} width={W - fw * 2 - 10} height={H - fw * 2 - 10} rx="9"
+        fill="none" stroke="#9A8050" strokeWidth="0.5" opacity="0.3" />
+
+      {[
+        { tx: fw, ty: fw, rot: 0 },
+        { tx: W - fw, ty: fw, rot: 90 },
+        { tx: W - fw, ty: H - fw, rot: 180 },
+        { tx: fw, ty: H - fw, rot: 270 },
+      ].map((pos, i) => (
+        <g key={i} transform={`translate(${pos.tx},${pos.ty}) rotate(${pos.rot})`}>
+          <CornerGroup lv={4} gold="#D4AF37" goldH="#F0D060" gem="#1A44CC" gemAlt="#2255CC" />
+        </g>
+      ))}
+
+      {/* Top title nameplate */}
+      {(() => {
+        const rx = fw + 6;
+        const ry = fw + 5;
+        const rw = W - fw * 2 - 12;
+        const rh = 44;
+        return (
+          <g>
+            <rect x={rx} y={ry} width={rw} height={rh} rx="3"
+              fill="#04081A" opacity="0.88" />
+            <rect x={rx} y={ry} width={rw} height={rh} rx="3"
+              fill="none" stroke="#D4AF37" strokeWidth="1" opacity="0.55" />
+            <rect x={rx + 4} y={ry + 4} width={rw - 8} height={rh - 8} rx="2"
+              fill="none" stroke="#F0D060" strokeWidth="0.55" opacity="0.35" />
+            <text
+              x={W / 2}
+              y={ry + rh / 2}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="card-back-title"
+              fill="#D4AF37"
+              opacity="0.9"
+            >
+              ENCHANTED VAULT
+            </text>
+          </g>
+        );
+      })()}
+
+      {/* Bottom series nameplate */}
+      {(() => {
+        const rx = fw + 6;
+        const rh = 42;
+        const ry = H - fw - rh - 5;
+        const rw = W - fw * 2 - 12;
+        return (
+          <g>
+            <rect x={rx} y={ry} width={rw} height={rh} rx="3"
+              fill="#04081A" opacity="0.88" />
+            <rect x={rx} y={ry} width={rw} height={rh} rx="3"
+              fill="none" stroke="#D4AF37" strokeWidth="1" opacity="0.55" />
+            <rect x={rx + 4} y={ry + 4} width={rw - 8} height={rh - 8} rx="2"
+              fill="none" stroke="#F0D060" strokeWidth="0.55" opacity="0.35" />
+            <text
+              x={W / 2}
+              y={ry + rh / 2}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="card-back-series"
+              fill="#D4AF37"
+              opacity="0.9"
+            >
+              Фантастический коллекционер
+            </text>
+          </g>
+        );
+      })()}
+    </svg>
+  );
+}
+
+function CardBackTile({ idx, tileRef }: {
+  idx: number;
+  tileRef: (el: HTMLDivElement | null) => void;
+}) {
+  return (
+    <div className="card-enter" style={{ animationDelay: `${idx * 0.04}s` }}>
+      <div className="card-tilt-scene">
+        <div
+          ref={tileRef}
+          className="card-tilt-target flex flex-col items-center gap-2"
+          style={{ position: "relative" }}
+        >
+          <div className="card-art" style={{
+            width: "100%",
+            aspectRatio: "5/7",
+            filter: "drop-shadow(0 8px 28px rgba(40,20,0,0.7)) drop-shadow(0 0 12px rgba(212,175,55,0.18))",
+          }}>
+            <CardBackSVG />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#D4AF37", boxShadow: "0 0 5px #D4AF37" }} />
+            <span className="type-label type-label--tile" style={{ color: "#D4AF37" }}>
+              Рубашка
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -952,7 +1385,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
                   <path d="M5 7h4M7 5v4" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
                 <span className="type-value" style={{ color: "#F0D882" }}>
-                  {details?.booster ?? "Неизвестный набор"}
+                  {card.booster ?? details?.booster ?? "Неизвестный набор"}
                 </span>
               </div>
             </div>
@@ -966,7 +1399,7 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
                   <path d="M4 1v3M10 1v3" stroke="#D4AF37" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
                 <span className="type-value" style={{ color: "#F0D882" }}>
-                  {details?.obtainedDate ?? "Неизвестно"}
+                  {card.obtainedDate ?? details?.obtainedDate ?? "Неизвестно"}
                 </span>
               </div>
             </div>
@@ -974,7 +1407,11 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
 
           {/* Card number */}
           <p className="type-meta text-right" style={{ color: "#5C6C94" }}>
-            Серия «Фантастический коллекционер» · № {String(CARDS.findIndex(c => c.princess === card.princess) + 1).padStart(3, "0")} / {String(CARDS.length).padStart(3, "0")}
+            Серия «Фантастический коллекционер» · № {String(
+              card.slug
+                ? catalogIndex(card.slug) + 1
+                : CARDS.findIndex(c => c.princess === card.princess) + 1
+            ).padStart(3, "0")} / {String(CATALOG_ORDER.length).padStart(3, "0")}
           </p>
         </div>
       </motion.div>
@@ -989,6 +1426,69 @@ function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
 export default function App() {
   const tileRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [selectedCard, setSelectedCard] = useState<CardDef | null>(null);
+  const [albumView, setAlbumView] = useState<AlbumViewState>("landing");
+  const [albumData, setAlbumData] = useState<AlbumResponse | null>(null);
+  const [displayCards, setDisplayCards] = useState<CardDef[]>(CARDS);
+
+  const albumSecret = import.meta.env.VITE_ALBUM_LINK_SECRET ?? "";
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const u = params.get("u");
+    if (!u) {
+      setAlbumView("landing");
+      setDisplayCards([]);
+      return;
+    }
+    if (!params.get("k") || !params.get("exp")) {
+      setAlbumView("landing");
+      setDisplayCards([]);
+      return;
+    }
+
+    let cancelled = false;
+    setAlbumView("loading");
+
+    void (async () => {
+      const result = await fetchAlbum(params, albumSecret);
+      if (cancelled) return;
+      if (!result.ok) {
+        setAlbumView(
+          result.error === "unauthorized"
+            ? "unauthorized"
+            : result.error === "not_found"
+              ? "not_found"
+              : "offline",
+        );
+        setDisplayCards([]);
+        return;
+      }
+      setAlbumData(result.data);
+      setAlbumView("album");
+      const owned: CardDef[] = result.data.cards
+        .map((c) => {
+          const entry = getCatalogEntry(c.id);
+          if (!entry) return null;
+          return {
+            princess: c.name,
+            slug: c.id,
+            rarity: c.rarity,
+            portrait: entry.portrait,
+            obtainedDate: c.d,
+            booster: c.b,
+          };
+        })
+        .filter((c): c is CardDef => c !== null);
+      setDisplayCards(owned);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [albumSecret]);
+
+  const showPreviewGrid = import.meta.env.DEV && albumView === "landing";
+  const gridCards = albumView === "album" ? displayCards : showPreviewGrid ? CARDS : [];
 
   const stars = useMemo(() => Array.from({ length: 120 }, (_, i) => ({
     x: srng(i * 3) * 100,
@@ -1058,6 +1558,36 @@ export default function App() {
           50%       { opacity: 0.85; filter: hue-rotate(180deg) saturate(2.2); }
         }
         .holo-layer { animation: holo-shift 3s ease-in-out infinite; }
+
+        @keyframes mythic-seal-cw  { to { transform: rotate(360deg); } }
+        @keyframes mythic-seal-ccw { to { transform: rotate(-360deg); } }
+        .mythic-seal-cw  { animation: mythic-seal-cw  32s linear infinite; }
+        .mythic-seal-ccw { animation: mythic-seal-ccw 22s linear infinite; }
+
+        @keyframes mythic-sweep { to { transform: rotate(360deg); } }
+        .mythic-sweep { animation: mythic-sweep 5s linear infinite; }
+
+        @keyframes mythic-frame-pulse {
+          0%, 100% { opacity: 0.08; }
+          50%       { opacity: 0.28; }
+        }
+        .mythic-frame-pulse { animation: mythic-frame-pulse 2.4s ease-in-out infinite; }
+
+        @keyframes mythic-pool {
+          0%, 100% { opacity: 0.22; }
+          50%       { opacity: 0.45; }
+        }
+        .mythic-pool { animation: mythic-pool 2.1s ease-in-out infinite; }
+
+        @keyframes mythic-ember {
+          0%   { opacity: 0;   transform: translate(0, 0) scale(0.6); }
+          12%  { opacity: 0.45; }
+          82%  { opacity: 0.35; }
+          100% { opacity: 0;   transform: translate(var(--drift, 0), -80px) scale(1.1); }
+        }
+        .mythic-ember {
+          animation: mythic-ember var(--dur, 3s) linear var(--delay, 0s) infinite;
+        }
 
         @keyframes twinkle {
           0%, 100% { opacity: var(--op); }
@@ -1161,7 +1691,36 @@ export default function App() {
           Enchanted Vault
         </h1>
         <p className="type-eyebrow mt-3 text-[#50608A]">
-          {ruCount(CARDS.length, ["карта", "карты", "карт"])} · {ruCount(Object.keys(CFG).length, ["редкость", "редкости", "редкостей"])}
+          {albumView === "album" && albumData ? (
+            <>
+              @{albumData.u} · Коллекция {albumData.collection.owned} из {albumData.collection.total}
+              {albumData.series[0]
+                ? ` · ${albumData.series[0].name}: ${albumData.series[0].owned} из ${albumData.series[0].total}`
+                : ""}
+            </>
+          ) : albumView === "loading" ? (
+            "Загрузка альбома…"
+          ) : albumView === "offline" ? (
+            "Альбом доступен на стриме"
+          ) : albumView === "unauthorized" ? (
+            "Ссылка недействительна"
+          ) : albumView === "not_found" ? (
+            "Игрок не найден"
+          ) : albumView === "landing" ? (
+            showPreviewGrid ? (
+              <>
+                {ruCount(CARDS.length, ["карта", "карты", "карт"])} ·{" "}
+                {ruCount(Object.keys(CFG).length, ["редкость", "редкости", "редкостей"])} · предпросмотр
+              </>
+            ) : (
+              "Получите ссылку командой !альбом в чате стрима"
+            )
+          ) : (
+            <>
+              {ruCount(CARDS.length, ["карта", "карты", "карт"])} ·{" "}
+              {ruCount(Object.keys(CFG).length, ["редкость", "редкости", "редкостей"])}
+            </>
+          )}
         </p>
         <div className="flex items-center justify-center gap-2 sm:gap-3 mt-3 sm:mt-4 opacity-35">
           <div className="h-px w-16 sm:w-28 md:w-44" style={{ background: "linear-gradient(to right, transparent, #D4AF37)" }} />
@@ -1174,10 +1733,26 @@ export default function App() {
 
       {/* Card grid */}
       <main className="relative z-10 px-3 sm:px-5 md:px-6 pb-16 sm:pb-20">
+        {albumView === "loading" && (
+          <p className="text-center type-eyebrow text-[#50608A] py-20">Загрузка альбома…</p>
+        )}
+        {(albumView === "offline" || albumView === "unauthorized" || albumView === "not_found") && (
+          <p className="text-center type-eyebrow text-[#50608A] py-20">
+            {albumView === "offline" && "Альбом доступен на стриме — туннель выключен или API недоступен."}
+            {albumView === "unauthorized" && "Ссылка недействительна или устарела."}
+            {albumView === "not_found" && "Игрок не найден."}
+          </p>
+        )}
+        {albumView === "landing" && !showPreviewGrid && (
+          <p className="text-center type-eyebrow text-[#50608A] max-w-lg mx-auto py-10">
+            Откройте альбом по персональной ссылке из чата GoodGame. Полный каталог карт здесь не показывается.
+          </p>
+        )}
+        {gridCards.length > 0 && (
         <div className="grid grid-cols-2 min-[480px]:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-4 md:gap-5 max-w-[1600px] mx-auto">
-          {CARDS.map((card, idx) => (
+          {gridCards.map((card, idx) => (
             <CardTile
-              key={idx}
+              key={`${card.princess}-${idx}`}
               idx={idx}
               princess={card.princess}
               rarity={card.rarity}
@@ -1186,7 +1761,15 @@ export default function App() {
               onClick={() => setSelectedCard(card)}
             />
           ))}
+          <CardBackTile
+            idx={gridCards.length}
+            tileRef={el => { tileRefs.current[gridCards.length] = el; }}
+          />
         </div>
+        )}
+        {albumView === "album" && displayCards.length === 0 && (
+          <p className="text-center type-eyebrow text-[#50608A] py-20">В альбоме пока нет карт.</p>
+        )}
 
         {/* Footer ornament */}
         <div className="text-center mt-14 flex flex-col items-center gap-2">
