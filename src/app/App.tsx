@@ -2,6 +2,7 @@ import { useMemo, useRef, useEffect, useState, type CSSProperties } from "react"
 import { AnimatePresence } from "motion/react";
 import { fetchAlbum, type AlbumResponse } from "@/lib/albumApi";
 import { getCatalogEntry } from "@/lib/cardCatalog";
+import { DEFAULT_CARD_BACK_ID } from "@/lib/cardBacks";
 import type { AlbumViewState, CardDef } from "./types";
 import { CFG } from "./rarityConfig";
 import { CARDS } from "./demoCards";
@@ -64,6 +65,7 @@ export default function App() {
             portrait: entry.portrait,
             obtainedDate: c.d,
             booster: c.b,
+            cardBackId: c.card_back_id || DEFAULT_CARD_BACK_ID,
           };
         })
         .filter((c): c is CardDef => c !== null);

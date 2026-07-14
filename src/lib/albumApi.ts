@@ -14,6 +14,7 @@ export interface AlbumSeries {
   name: string;
   owned: number;
   total: number;
+  card_back_id?: string;
 }
 
 export interface AlbumCard {
@@ -23,6 +24,8 @@ export interface AlbumCard {
   d: string;
   b: string;
   image_url?: string;
+  series_id?: string;
+  card_back_id?: string;
 }
 
 export interface AlbumResponse {

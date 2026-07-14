@@ -1,19 +1,24 @@
-import { useEffect, useRef, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { motion } from "motion/react";
 import { catalogIndex, CATALOG_ORDER, getCatalogEntry } from "@/lib/cardCatalog";
 import type { CardDef } from "./types";
 import { CFG } from "./rarityConfig";
-import { CARD_DETAILS } from "./cardDetails";
+import { getCardDetails } from "./cardDetails";
 import { cardTiltTransform } from "./utils";
 import { CARDS } from "./demoCards";
 import { CardSVG } from "./cards/CardSVG";
+import { Card3DViewer } from "./cards/Card3DViewer";
+import { IsometricCubeIcon } from "./icons/IsometricCubeIcon";
+import { resolveCardBack } from "@/lib/cardBacks";
 
 const fallbackPortrait = getCatalogEntry(CATALOG_ORDER[0])!.portrait;
 
 export function CardModal({ card, onClose }: { card: CardDef; onClose: () => void }) {
   const cfg = CFG[card.rarity];
-  const details = CARD_DETAILS[card.princess];
+  const details = getCardDetails(card.slug);
   const portrait = card.portrait ?? fallbackPortrait;
+  const cardBackSrc = resolveCardBack(card.cardBackId);
+  const [cubeOn, setCubeOn] = useState(false);
 
   // 3D tilt for the modal card
   const modalCardRef = useRef<HTMLDivElement>(null);
@@ -110,6 +115,19 @@ export function CardModal({ card, onClose }: { card: CardDef; onClose: () => voi
         {/* ── LEFT: card ── */}
         <div className="modal-card-column flex-shrink-0 flex flex-col items-center lg:items-start gap-3 sm:gap-4 overflow-visible">
           <div className="card-tilt-scene card-modal-tilt-scene" style={{ width: "100%" }}>
+          {cubeOn ? (
+            <Card3DViewer
+              rarity={card.rarity}
+              portrait={portrait}
+              princessName={card.princess}
+              cardBackSrc={cardBackSrc}
+              glowFilter={
+                cfg.glowStr > 0
+                  ? `drop-shadow(0 0 ${cfg.glowStr * 0.55}px ${cfg.glowCol}80)`
+                  : "drop-shadow(0 12px 32px rgba(0,0,0,0.85))"
+              }
+            />
+          ) : (
           <div
             ref={modalCardRef}
             className="card-tilt-target"
@@ -126,16 +144,37 @@ export function CardModal({ card, onClose }: { card: CardDef; onClose: () => voi
           >
             <CardSVG rarity={card.rarity} portrait={portrait} princessName={card.princess} />
           </div>
+          )}
           </div>
 
-          {/* Rarity badge under card */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-            style={{ border: `1px solid ${cfg.color}40`, background: `${cfg.color}12` }}>
-            <div className="w-2 h-2 rounded-full" style={{ background: cfg.color, boxShadow: `0 0 6px ${cfg.color}` }} />
-            <span className="type-label" style={{ color: cfg.color }}>
-              {cfg.name}
-            </span>
-            <span className="text-xs ml-1" style={{ color: cfg.color, opacity: 0.55 }}>{cfg.tier}</span>
+          {/* Rarity badge + cube toggle */}
+          <div className="flex items-center justify-between gap-3 w-full">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg min-w-0"
+              style={{ border: `1px solid ${cfg.color}40`, background: `${cfg.color}12` }}>
+              <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: cfg.color, boxShadow: `0 0 6px ${cfg.color}` }} />
+              <span className="type-label" style={{ color: cfg.color }}>
+                {cfg.name}
+              </span>
+              <span className="text-xs ml-1" style={{ color: cfg.color, opacity: 0.55 }}>{cfg.tier}</span>
+            </div>
+
+            <button
+              type="button"
+              role="switch"
+              aria-checked={cubeOn}
+              aria-label={cubeOn ? "3D-просмотр: вкл" : "3D-просмотр: выкл"}
+              onClick={() => setCubeOn(v => !v)}
+              className={[
+                "flex-shrink-0 flex items-center justify-center rounded-lg p-1.5 cursor-pointer",
+                "transition-[color,background-color,opacity] duration-200",
+                "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]",
+                cubeOn
+                  ? "text-[#D4AF37] bg-[rgba(212,175,55,0.12)]"
+                  : "text-[#5C6C94] opacity-70 hover:opacity-100 hover:text-[#8494BC] hover:bg-[rgba(132,148,188,0.1)]",
+              ].join(" ")}
+            >
+              <IsometricCubeIcon />
+            </button>
           </div>
         </div>
 

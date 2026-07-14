@@ -17,6 +17,8 @@ export interface CardDef {
   obtainedDate?: string;
   booster?: string;
   slug?: string;
+  /** id рубашки серии (card_series.card_back_id) */
+  cardBackId?: string;
 }
 
 export interface CardDetails {
