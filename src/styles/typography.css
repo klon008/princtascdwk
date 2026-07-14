@@ -97,22 +97,7 @@
   line-height: 1.5;
 }
 
-/* ── Подписи на рубашке карты (крупные nameplate-пластины) ── */
-
-.card-back-title {
-  font-family: var(--font-display-en);
-  font-weight: 700;
-  font-size: clamp(12px, 2.8vw, 17px);
-  letter-spacing: clamp(0.08em, 0.05em + 0.2vw, 0.14em);
-  text-transform: uppercase;
-}
-
-.card-back-series {
-  font-family: var(--font-label);
-  font-weight: 700;
-  font-size: clamp(11px, 2.4vw, 15px);
-  letter-spacing: 0.04em;
-}
+/* Подписи на рубашке — вшиты в src/imports/card-back.svg (ассет как <img>). */
 
 /* ── Имя героини на SVG-карте — PT Serif Caption Bold (--font-card-name) ── */
 

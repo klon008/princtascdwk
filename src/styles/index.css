@@ -2,3 +2,4 @@
 @import './typography.css';
 @import './tailwind.css';
 @import './theme.css';
+@import '../app/styles/cardEffects.css';

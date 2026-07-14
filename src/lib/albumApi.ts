@@ -22,6 +22,7 @@ export interface AlbumCard {
   rarity: RarityKey;
   d: string;
   b: string;
+  image_url?: string;
 }
 
 export interface AlbumResponse {
