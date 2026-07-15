@@ -1,8 +1,9 @@
 import { useMemo, useRef, useEffect, useState, type CSSProperties } from "react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { fetchAlbum, type AlbumResponse } from "@/lib/albumApi";
 import { getCatalogEntry } from "@/lib/cardCatalog";
 import { DEFAULT_CARD_BACK_ID } from "@/lib/cardBacks";
+import { SERIES, seriesIdFromSlug, seriesCatalogOrder } from "@/lib/seriesMeta";
 import type { AlbumViewState, CardDef } from "./types";
 import { CFG } from "./rarityConfig";
 import { CARDS } from "./demoCards";
@@ -11,6 +12,59 @@ import { StarPoly } from "./cards/svgHelpers";
 import { CardTile } from "./cards/CardTile";
 import { CardBackTile } from "./cards/CardBackTile";
 import { CardModal } from "./CardModal";
+import { SeriesFilterBar, type SeriesFilterItem } from "./SeriesFilterBar";
+import { FilterIcon } from "./icons/FilterIcon";
+import { SortTriangleIcon } from "./icons/SortTriangleIcon";
+
+type SortMode = "off" | "asc" | "desc";
+
+const toolbarIconBtnClass = (active: boolean) =>
+  [
+    "inline-flex items-center justify-center rounded-full p-1 cursor-pointer align-middle",
+    "transition-[color,background-color,opacity] duration-200",
+    "focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[#D4AF37]",
+    active
+      ? "text-[#D4AF37] bg-[rgba(212,175,55,0.14)]"
+      : "text-[#465577] opacity-80 hover:opacity-100 hover:text-[#8494BC] hover:bg-[rgba(132,148,188,0.08)]",
+  ].join(" ");
+
+/** Крохотные инлайн-переключатели фильтра по сериям и сортировки по редкости в строке сводки. */
+function AlbumToolbarIcons({ showFilter, filterOpen, onToggleFilter, sortMode, sortAriaLabel, onCycleSort }: {
+  showFilter: boolean;
+  filterOpen: boolean;
+  onToggleFilter: () => void;
+  sortMode: SortMode;
+  sortAriaLabel: string;
+  onCycleSort: () => void;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1 ml-1.5 align-middle">
+      {showFilter && (
+        <button
+          type="button"
+          aria-pressed={filterOpen}
+          aria-label={filterOpen ? "Скрыть фильтр по сериям" : "Показать фильтр по сериям"}
+          onClick={onToggleFilter}
+          className={toolbarIconBtnClass(filterOpen)}
+        >
+          <FilterIcon width={14} height={14} />
+        </button>
+      )}
+      <button
+        type="button"
+        aria-label={sortAriaLabel}
+        onClick={onCycleSort}
+        className={toolbarIconBtnClass(sortMode !== "off")}
+      >
+        <SortTriangleIcon
+          width={14}
+          height={14}
+          style={{ transform: sortMode === "desc" ? "rotate(180deg)" : undefined, transition: "transform 0.25s" }}
+        />
+      </button>
+    </span>
+  );
+}
 
 export default function App() {
   const tileRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -18,6 +72,9 @@ export default function App() {
   const [albumView, setAlbumView] = useState<AlbumViewState>("landing");
   const [albumData, setAlbumData] = useState<AlbumResponse | null>(null);
   const [displayCards, setDisplayCards] = useState<CardDef[]>(CARDS);
+  const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
+  const [filterBarOpen, setFilterBarOpen] = useState(false);
+  const [sortMode, setSortMode] = useState<SortMode>("off");
 
   const albumSecret = import.meta.env.VITE_ALBUM_LINK_SECRET ?? "";
 
@@ -54,6 +111,7 @@ export default function App() {
       }
       setAlbumData(result.data);
       setAlbumView("album");
+      setSelectedSeriesId(null);
       const owned = result.data.cards
         .map((c): CardDef | null => {
           const entry = getCatalogEntry(c.id);
@@ -78,7 +136,50 @@ export default function App() {
   }, [albumSecret]);
 
   const showPreviewGrid = import.meta.env.DEV && albumView === "landing";
-  const gridCards = albumView === "album" ? displayCards : showPreviewGrid ? CARDS : [];
+  const baseCards = albumView === "album" ? displayCards : showPreviewGrid ? CARDS : [];
+
+  const seriesFilterItems: SeriesFilterItem[] = useMemo(() => {
+    if (albumView === "album" && albumData) {
+      if (albumData.series.length < 2) return [];
+      return [
+        { id: null, name: "Все", owned: albumData.collection.owned, total: albumData.collection.total },
+        ...albumData.series.map((s) => ({ id: s.id, name: s.name, owned: s.owned, total: s.total })),
+      ];
+    }
+    if (showPreviewGrid) {
+      const seriesList = Object.values(SERIES);
+      if (seriesList.length < 2) return [];
+      return [
+        { id: null, name: "Все", owned: CARDS.length, total: CARDS.length },
+        ...seriesList.map((s) => {
+          const total = seriesCatalogOrder(s.id).length;
+          return { id: s.id, name: s.name, owned: total, total };
+        }),
+      ];
+    }
+    return [];
+  }, [albumView, albumData, showPreviewGrid]);
+
+  const gridCards = selectedSeriesId
+    ? baseCards.filter((c) => seriesIdFromSlug(c.slug) === selectedSeriesId)
+    : baseCards;
+
+  const RARITY_ORDER = Object.keys(CFG) as CardDef["rarity"][];
+  const sortedCards = sortMode === "off"
+    ? gridCards
+    : [...gridCards].sort((a, b) => {
+      const diff = RARITY_ORDER.indexOf(a.rarity) - RARITY_ORDER.indexOf(b.rarity);
+      return sortMode === "asc" ? diff : -diff;
+    });
+
+  const cycleSortMode = () => {
+    setSortMode((m) => (m === "off" ? "asc" : m === "asc" ? "desc" : "off"));
+  };
+  const sortAriaLabel = sortMode === "off"
+    ? "Сортировка по редкости: выключена"
+    : sortMode === "asc"
+      ? "Сортировка по редкости: Common → Secret Rare"
+      : "Сортировка по редкости: Secret Rare → Common";
 
   const stars = useMemo(() => Array.from({ length: 120 }, (_, i) => ({
     x: srng(i * 3) * 100,
@@ -174,9 +275,14 @@ export default function App() {
           {albumView === "album" && albumData ? (
             <>
               @{albumData.u} · Коллекция {albumData.collection.owned} из {albumData.collection.total}
-              {albumData.series[0]
-                ? ` · ${albumData.series[0].name}: ${albumData.series[0].owned} из ${albumData.series[0].total}`
-                : ""}
+              <AlbumToolbarIcons
+                showFilter={seriesFilterItems.length > 0}
+                filterOpen={filterBarOpen}
+                onToggleFilter={() => setFilterBarOpen((v) => !v)}
+                sortMode={sortMode}
+                sortAriaLabel={sortAriaLabel}
+                onCycleSort={cycleSortMode}
+              />
             </>
           ) : albumView === "loading" ? (
             "Загрузка альбома…"
@@ -191,6 +297,14 @@ export default function App() {
               <>
                 {ruCount(CARDS.length, ["карта", "карты", "карт"])} ·{" "}
                 {ruCount(Object.keys(CFG).length, ["редкость", "редкости", "редкостей"])} · предпросмотр
+                <AlbumToolbarIcons
+                  showFilter={seriesFilterItems.length > 0}
+                  filterOpen={filterBarOpen}
+                  onToggleFilter={() => setFilterBarOpen((v) => !v)}
+                  sortMode={sortMode}
+                  sortAriaLabel={sortAriaLabel}
+                  onCycleSort={cycleSortMode}
+                />
               </>
             ) : (
               "Получите ссылку командой !альбом в чате стрима"
@@ -228,9 +342,26 @@ export default function App() {
             Откройте альбом по персональной ссылке из чата GoodGame. Полный каталог карт здесь не показывается.
           </p>
         )}
-        {gridCards.length > 0 && (
+        <AnimatePresence initial={false}>
+          {filterBarOpen && seriesFilterItems.length > 0 && baseCards.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              style={{ overflow: "hidden" }}
+            >
+              <SeriesFilterBar
+                items={seriesFilterItems}
+                selectedId={selectedSeriesId}
+                onSelect={setSelectedSeriesId}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {sortedCards.length > 0 && (
         <div className="grid grid-cols-2 min-[480px]:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-4 md:gap-5 max-w-[1600px] mx-auto">
-          {gridCards.map((card, idx) => (
+          {sortedCards.map((card, idx) => (
             <CardTile
               key={`${card.princess}-${idx}`}
               idx={idx}
@@ -244,14 +375,17 @@ export default function App() {
           {/* Рубашка — только в DEV-превью каталога; в !альбом не показываем (owned-only). */}
           {showPreviewGrid && (
             <CardBackTile
-              idx={gridCards.length}
-              tileRef={el => { tileRefs.current[gridCards.length] = el; }}
+              idx={sortedCards.length}
+              tileRef={el => { tileRefs.current[sortedCards.length] = el; }}
             />
           )}
         </div>
         )}
         {albumView === "album" && displayCards.length === 0 && (
           <p className="text-center type-eyebrow text-[#50608A] py-20">В альбоме пока нет карт.</p>
+        )}
+        {albumView === "album" && displayCards.length > 0 && sortedCards.length === 0 && (
+          <p className="text-center type-eyebrow text-[#50608A] py-20">В этой серии пока нет полученных карт.</p>
         )}
 
         {/* Footer ornament */}

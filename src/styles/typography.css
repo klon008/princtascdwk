@@ -69,7 +69,7 @@
 /* Плашка редкости (Common, Rare, …) */
 .type-label {
   font-family: var(--font-label);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 0.75rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
