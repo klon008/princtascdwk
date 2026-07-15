@@ -58,6 +58,8 @@ import classicJaneImg from "@/imports/classic-jane.webp";
 import classicAnnaImg from "@/imports/classic-anna.webp";
 import classicBruniImg from "@/imports/classic-bruni.webp";
 import classicElsaSpiritImg from "@/imports/classic-elsa-spirit.webp";
+// series-pack:generated:imports:start
+// series-pack:generated:imports:end
 
 export interface CatalogEntry {
   id: string;
@@ -65,6 +67,8 @@ export interface CatalogEntry {
   rarity: RarityKey;
   portrait: string;
   sortOrder: number;
+  /** id серии (fantast / classic / …) */
+  seriesId: string;
 }
 
 /** Стабильный порядок каталога (контракт с ботом). */
@@ -128,6 +132,8 @@ export const CATALOG_ORDER: string[] = [
   "classic-anna",
   "classic-bruni",
   "classic-elsa-spirit",
+  // series-pack:generated:order:start
+  // series-pack:generated:order:end
 ];
 
 const PORTRAITS: Record<string, string> = {
@@ -189,6 +195,8 @@ const PORTRAITS: Record<string, string> = {
   "classic-anna": classicAnnaImg,
   "classic-bruni": classicBruniImg,
   "classic-elsa-spirit": classicElsaSpiritImg,
+  // series-pack:generated:portraits:start
+  // series-pack:generated:portraits:end
 };
 
 const NAMES: Record<string, string> = {
@@ -250,6 +258,8 @@ const NAMES: Record<string, string> = {
   "classic-anna": "Анна",
   "classic-bruni": "Бруни",
   "classic-elsa-spirit": "Домашняя Эльза",
+  // series-pack:generated:names:start
+  // series-pack:generated:names:end
 };
 
 const RARITIES: Record<string, RarityKey> = {
@@ -312,7 +322,21 @@ const RARITIES: Record<string, RarityKey> = {
   "classic-anna": "legendary",
   "classic-bruni": "legendary",
   "classic-elsa-spirit": "mythic",
+  // series-pack:generated:rarities:start
+  // series-pack:generated:rarities:end
 };
+
+/** Явная привязка slug → series (для серий без префикса / импортера). classic-* ещё и через prefix. */
+const SERIES_OF: Record<string, string> = {
+  // series-pack:generated:seriesOf:start
+  // series-pack:generated:seriesOf:end
+};
+
+function resolveSeriesId(slug: string): string {
+  if (SERIES_OF[slug]) return SERIES_OF[slug];
+  if (slug.startsWith("classic-")) return "classic";
+  return "fantast";
+}
 
 export function catalogIndex(slug: string): number {
   const idx = CATALOG_ORDER.indexOf(slug);
@@ -327,5 +351,6 @@ export function getCatalogEntry(slug: string): CatalogEntry | null {
     rarity: RARITIES[slug] ?? "common",
     portrait: PORTRAITS[slug],
     sortOrder: catalogIndex(slug),
+    seriesId: resolveSeriesId(slug),
   };
 }

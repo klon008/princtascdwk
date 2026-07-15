@@ -1,12 +1,12 @@
-import { CATALOG_ORDER } from "./cardCatalog";
+import { CATALOG_ORDER, getCatalogEntry } from "./cardCatalog";
 
-export type SeriesId = "fantast" | "classic";
+export type SeriesId = string;
 
 export interface SeriesMeta {
   id: SeriesId;
   name: string;
   cardBackId: string;
-  /** DEV-подпись бустера, пока нет album API */
+  /** DEV-подпись бустера, пока нет данных с API */
   boosterLabel: string;
 }
 
@@ -23,15 +23,21 @@ export const SERIES: Record<SeriesId, SeriesMeta> = {
     cardBackId: "card-back-classic",
     boosterLabel: "Серия «Классический набор» · Тираж № 001",
   },
+  // series-pack:generated:series:start
+  // series-pack:generated:series:end
 };
 
 export function seriesIdFromSlug(slug: string | undefined): SeriesId {
-  if (slug?.startsWith("classic-")) return "classic";
+  if (!slug) return "fantast";
+  const entry = getCatalogEntry(slug);
+  if (entry?.seriesId) return entry.seriesId;
+  if (slug.startsWith("classic-")) return "classic";
   return "fantast";
 }
 
 export function getSeriesMeta(slug: string | undefined): SeriesMeta {
-  return SERIES[seriesIdFromSlug(slug)];
+  const id = seriesIdFromSlug(slug);
+  return SERIES[id] ?? SERIES.fantast;
 }
 
 /** Карты одной серии в порядке каталога. */
