@@ -52,3 +52,6 @@ Desktop.ini
 
 # Local image backups
 src/imports/backup/
+
+# Local card SVG/HTML export (not published yet)
+card-templates/

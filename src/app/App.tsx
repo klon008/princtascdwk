@@ -54,8 +54,8 @@ export default function App() {
       }
       setAlbumData(result.data);
       setAlbumView("album");
-      const owned: CardDef[] = result.data.cards
-        .map((c) => {
+      const owned = result.data.cards
+        .map((c): CardDef | null => {
           const entry = getCatalogEntry(c.id);
           if (!entry) return null;
           return {
@@ -264,7 +264,11 @@ export default function App() {
             <div className="h-px w-16" style={{ background: "linear-gradient(to left, transparent, #D4AF37)" }} />
           </div>
           <p className="type-meta" style={{ color: "#5C6C94" }}>
-            Серия «Фантастический коллекционер» · Тираж № 001
+            {showPreviewGrid
+              ? "Фантастический коллекционер · Классический набор"
+              : albumData?.series?.length
+                ? albumData.series.map((s) => s.name).join(" · ")
+                : "Серия «Фантастический коллекционер» · Тираж № 001"}
           </p>
           <p className="type-meta mt-1" style={{ color: "#465577" }}>
             © 2026 klon008

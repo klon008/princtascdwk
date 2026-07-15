@@ -97,7 +97,8 @@ src/imports/{slug}.webp
 `cardDetails.ts` только читает json (`getCardStory(slug)`).  
 Дата/бустер в проде — с Album API; в DEV модалка подставляет заглушки.
 
-После правки json: commit + push → Pages; у бота `update.cmd` скопирует зеркало в `data/cards/cardDetails.json` (админка, только чтение).
+После правки json: commit + push → Pages; у бота `update.cmd` обновит кэш
+`data/card-assets-repo` (админка читает `…/src/app/cardDetails.json`, только чтение).
 
 ### 3.4 Бот
 
@@ -201,7 +202,7 @@ UPDATE card_series SET card_back_id = 'my-back' WHERE id = 'fantast';
 - `src/app/cardDetails.json` — лор (`stories[slug]`)
 
 Бот при `update.cmd` тянет оба через `scripts/sync-card-assets.ps1` →  
-`obs/assets/cards/` и `data/cards/cardDetails.json` (admin, только чтение).
+`obs/assets/cards/` (арты) и кэш `data/card-assets-repo/` (там же json для админки).
 
 После добавления webp/svg/json — push в `main`, затем у стримера `update.cmd`.
 

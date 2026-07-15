@@ -28,6 +28,37 @@ import annaImg from "@/imports/anna.webp";
 import olafImg from "@/imports/olaf.webp";
 import pascalImg from "@/imports/pascal.webp";
 
+import classicFlounderImg from "@/imports/classic-flounder.webp";
+import classicCinderellaImg from "@/imports/classic-cinderella.webp";
+import classicSebastianImg from "@/imports/classic-sebastian.webp";
+import classicAshaImg from "@/imports/classic-asha.webp";
+import classicPascalImg from "@/imports/classic-pascal.webp";
+import classicJasmineImg from "@/imports/classic-jasmine.webp";
+import classicMulanImg from "@/imports/classic-mulan.webp";
+import classicTinkerBellImg from "@/imports/classic-tinker-bell.webp";
+import classicPocahontasImg from "@/imports/classic-pocahontas.webp";
+import classicMeridaImg from "@/imports/classic-merida.webp";
+import classicMirabelImg from "@/imports/classic-mirabel.webp";
+import classicBelleImg from "@/imports/classic-belle.webp";
+import classicMaximusImg from "@/imports/classic-maximus.webp";
+import classicOlafImg from "@/imports/classic-olaf.webp";
+import classicMegaraImg from "@/imports/classic-megara.webp";
+import classicRayaImg from "@/imports/classic-raya.webp";
+import classicMoanaImg from "@/imports/classic-moana.webp";
+import classicTianaImg from "@/imports/classic-tiana.webp";
+import classicSnowWhiteImg from "@/imports/classic-snow-white.webp";
+import classicNokkImg from "@/imports/classic-nokk.webp";
+import classicArielImg from "@/imports/classic-ariel.webp";
+import classicRapunzelImg from "@/imports/classic-rapunzel.webp";
+import classicEsmeraldaImg from "@/imports/classic-esmeralda.webp";
+import classicElsaImg from "@/imports/classic-elsa.webp";
+import classicAuroraImg from "@/imports/classic-aurora.webp";
+import classicKidaImg from "@/imports/classic-kida.webp";
+import classicJaneImg from "@/imports/classic-jane.webp";
+import classicAnnaImg from "@/imports/classic-anna.webp";
+import classicBruniImg from "@/imports/classic-bruni.webp";
+import classicElsaSpiritImg from "@/imports/classic-elsa-spirit.webp";
+
 export interface CatalogEntry {
   id: string;
   name: string;
@@ -66,6 +97,37 @@ export const CATALOG_ORDER: string[] = [
   "olaf",
   "pascal",
   "elsa",
+  // classic series
+  "classic-flounder",
+  "classic-cinderella",
+  "classic-sebastian",
+  "classic-asha",
+  "classic-pascal",
+  "classic-jasmine",
+  "classic-mulan",
+  "classic-tinker-bell",
+  "classic-pocahontas",
+  "classic-merida",
+  "classic-mirabel",
+  "classic-belle",
+  "classic-maximus",
+  "classic-olaf",
+  "classic-megara",
+  "classic-raya",
+  "classic-moana",
+  "classic-tiana",
+  "classic-snow-white",
+  "classic-nokk",
+  "classic-ariel",
+  "classic-rapunzel",
+  "classic-esmeralda",
+  "classic-elsa",
+  "classic-aurora",
+  "classic-kida",
+  "classic-jane",
+  "classic-anna",
+  "classic-bruni",
+  "classic-elsa-spirit",
 ];
 
 const PORTRAITS: Record<string, string> = {
@@ -97,6 +159,36 @@ const PORTRAITS: Record<string, string> = {
   olaf: olafImg,
   pascal: pascalImg,
   elsa: elsaImg,
+  "classic-flounder": classicFlounderImg,
+  "classic-cinderella": classicCinderellaImg,
+  "classic-sebastian": classicSebastianImg,
+  "classic-asha": classicAshaImg,
+  "classic-pascal": classicPascalImg,
+  "classic-jasmine": classicJasmineImg,
+  "classic-mulan": classicMulanImg,
+  "classic-tinker-bell": classicTinkerBellImg,
+  "classic-pocahontas": classicPocahontasImg,
+  "classic-merida": classicMeridaImg,
+  "classic-mirabel": classicMirabelImg,
+  "classic-belle": classicBelleImg,
+  "classic-maximus": classicMaximusImg,
+  "classic-olaf": classicOlafImg,
+  "classic-megara": classicMegaraImg,
+  "classic-raya": classicRayaImg,
+  "classic-moana": classicMoanaImg,
+  "classic-tiana": classicTianaImg,
+  "classic-snow-white": classicSnowWhiteImg,
+  "classic-nokk": classicNokkImg,
+  "classic-ariel": classicArielImg,
+  "classic-rapunzel": classicRapunzelImg,
+  "classic-esmeralda": classicEsmeraldaImg,
+  "classic-elsa": classicElsaImg,
+  "classic-aurora": classicAuroraImg,
+  "classic-kida": classicKidaImg,
+  "classic-jane": classicJaneImg,
+  "classic-anna": classicAnnaImg,
+  "classic-bruni": classicBruniImg,
+  "classic-elsa-spirit": classicElsaSpiritImg,
 };
 
 const NAMES: Record<string, string> = {
@@ -112,7 +204,7 @@ const NAMES: Record<string, string> = {
   tiana: "Тиана",
   merida: "Мерида",
   asha: "Аша",
-  raya: "Рая",
+  raya: "Райя",
   mulan: "Мулан",
   anna: "Анна",
   nala: "Нала",
@@ -128,6 +220,36 @@ const NAMES: Record<string, string> = {
   olaf: "Олаф",
   pascal: "Паскаль",
   elsa: "Эльза",
+  "classic-flounder": "Флаундер",
+  "classic-cinderella": "Золушка",
+  "classic-sebastian": "Себастьян",
+  "classic-asha": "Аша",
+  "classic-pascal": "Паскаль",
+  "classic-jasmine": "Жасмин",
+  "classic-mulan": "Мулан",
+  "classic-tinker-bell": "Динь-Динь",
+  "classic-pocahontas": "Покахонтас",
+  "classic-merida": "Мерида",
+  "classic-mirabel": "Мирабель",
+  "classic-belle": "Белль",
+  "classic-maximus": "Максимус",
+  "classic-olaf": "Олаф",
+  "classic-megara": "Мегара",
+  "classic-raya": "Райя",
+  "classic-moana": "Моана",
+  "classic-tiana": "Тиана",
+  "classic-snow-white": "Белоснежка",
+  "classic-nokk": "Нокк",
+  "classic-ariel": "Ариэль",
+  "classic-rapunzel": "Рапунцель",
+  "classic-esmeralda": "Эсмеральда",
+  "classic-elsa": "Эльза",
+  "classic-aurora": "Аврора",
+  "classic-kida": "Кида",
+  "classic-jane": "Джейн",
+  "classic-anna": "Анна",
+  "classic-bruni": "Бруни",
+  "classic-elsa-spirit": "Домашняя Эльза",
 };
 
 const RARITIES: Record<string, RarityKey> = {
@@ -159,6 +281,37 @@ const RARITIES: Record<string, RarityKey> = {
   olaf: "common",
   pascal: "common",
   elsa: "mythic",
+  // classic series
+  "classic-flounder": "common",
+  "classic-cinderella": "common",
+  "classic-sebastian": "common",
+  "classic-asha": "common",
+  "classic-pascal": "common",
+  "classic-jasmine": "common",
+  "classic-mulan": "common",
+  "classic-tinker-bell": "common",
+  "classic-pocahontas": "common",
+  "classic-merida": "common",
+  "classic-mirabel": "uncommon",
+  "classic-belle": "uncommon",
+  "classic-maximus": "uncommon",
+  "classic-olaf": "uncommon",
+  "classic-megara": "uncommon",
+  "classic-raya": "uncommon",
+  "classic-moana": "uncommon",
+  "classic-tiana": "uncommon",
+  "classic-snow-white": "rare",
+  "classic-nokk": "rare",
+  "classic-ariel": "rare",
+  "classic-rapunzel": "rare",
+  "classic-esmeralda": "rare",
+  "classic-elsa": "epic",
+  "classic-aurora": "epic",
+  "classic-kida": "epic",
+  "classic-jane": "epic",
+  "classic-anna": "legendary",
+  "classic-bruni": "legendary",
+  "classic-elsa-spirit": "mythic",
 };
 
 export function catalogIndex(slug: string): number {

@@ -1,7 +1,8 @@
 import type { CardDetails } from "./types";
+import { getSeriesMeta } from "@/lib/seriesMeta";
 import raw from "./cardDetails.json";
 
-/** DEV-заглушки бустера/даты, пока нет данных с API. */
+/** DEV-заглушка первой серии (совместимость). */
 export const FIRST_EDITION_BOOSTER =
   "Серия «Фантастический коллекционер» · Тираж № 001";
 export const COLLECTION_START_DATE = "12 июля 2026";
@@ -27,7 +28,7 @@ export function getCardDetails(slug: string | undefined): CardDetails | undefine
   if (!story) return undefined;
   return {
     story,
-    booster: FIRST_EDITION_BOOSTER,
+    booster: getSeriesMeta(slug).boosterLabel,
     obtainedDate: COLLECTION_START_DATE,
   };
 }

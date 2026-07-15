@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { motion } from "motion/react";
-import { catalogIndex, CATALOG_ORDER, getCatalogEntry } from "@/lib/cardCatalog";
+import { CATALOG_ORDER, getCatalogEntry } from "@/lib/cardCatalog";
+import { seriesCardNumber } from "@/lib/seriesMeta";
 import type { CardDef } from "./types";
 import { CFG } from "./rarityConfig";
 import { getCardDetails } from "./cardDetails";
 import { cardTiltTransform } from "./utils";
-import { CARDS } from "./demoCards";
 import { CardSVG } from "./cards/CardSVG";
 import { Card3DViewer } from "./cards/Card3DViewer";
 import { IsometricCubeIcon } from "./icons/IsometricCubeIcon";
@@ -19,6 +19,7 @@ export function CardModal({ card, onClose }: { card: CardDef; onClose: () => voi
   const portrait = card.portrait ?? fallbackPortrait;
   const cardBackSrc = resolveCardBack(card.cardBackId);
   const [cubeOn, setCubeOn] = useState(false);
+  const { n: seriesN, total: seriesTotal, seriesName } = seriesCardNumber(card.slug);
 
   // 3D tilt for the modal card
   const modalCardRef = useRef<HTMLDivElement>(null);
@@ -242,13 +243,10 @@ export function CardModal({ card, onClose }: { card: CardDef; onClose: () => voi
             </div>
           </div>
 
-          {/* Card number */}
+          {/* Card number — внутри своей серии */}
           <p className="type-meta text-right" style={{ color: "#5C6C94" }}>
-            Серия «Фантастический коллекционер» · № {String(
-              card.slug
-                ? catalogIndex(card.slug) + 1
-                : CARDS.findIndex(c => c.princess === card.princess) + 1
-            ).padStart(3, "0")} / {String(CATALOG_ORDER.length).padStart(3, "0")}
+            Серия «{seriesName}» · № {String(seriesN).padStart(3, "0")} /{" "}
+            {String(seriesTotal).padStart(3, "0")}
           </p>
         </div>
       </motion.div>
