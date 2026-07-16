@@ -10,6 +10,7 @@ import { CardSVG } from "./cards/CardSVG";
 import { Card3DViewer } from "./cards/Card3DViewer";
 import { IsometricCubeIcon } from "./icons/IsometricCubeIcon";
 import { resolveCardBack } from "@/lib/cardBacks";
+import { preloadImage } from "@/lib/preloadImage";
 
 const fallbackPortrait = getCatalogEntry(CATALOG_ORDER[0])!.portrait;
 
@@ -20,6 +21,12 @@ export function CardModal({ card, onClose }: { card: CardDef; onClose: () => voi
   const cardBackSrc = resolveCardBack(card.cardBackId);
   const [cubeOn, setCubeOn] = useState(false);
   const { n: seriesN, total: seriesTotal, seriesName } = seriesCardNumber(card.slug);
+
+  // Warm portrait + back before user flips to 3D
+  useEffect(() => {
+    void preloadImage(portrait);
+    void preloadImage(cardBackSrc);
+  }, [portrait, cardBackSrc]);
 
   // 3D tilt for the modal card
   const modalCardRef = useRef<HTMLDivElement>(null);

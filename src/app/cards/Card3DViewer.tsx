@@ -1,5 +1,6 @@
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import cardBackImg from "@/imports/card-back.svg";
+import { isImagePreloaded, preloadImage } from "@/lib/preloadImage";
 import type { RarityKey } from "../types";
 import { CardSVG } from "./CardSVG";
 
@@ -24,8 +25,34 @@ export function Card3DViewer({
   const [rx, setRx] = useState(8);
   const [ry, setRy] = useState(-18);
   const [dragging, setDragging] = useState(false);
+  const [backReady, setBackReady] = useState(() => isImagePreloaded(cardBackSrc));
   const lastPtr = useRef({ x: 0, y: 0 });
   const rot = useRef({ rx: 8, ry: -18 });
+
+  useEffect(() => {
+    let cancelled = false;
+    setBackReady(isImagePreloaded(cardBackSrc));
+
+    const load = (retry: boolean) => {
+      void preloadImage(cardBackSrc)
+        .then(() => {
+          if (!cancelled) setBackReady(true);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          if (retry) {
+            load(false);
+            return;
+          }
+          setBackReady(false);
+        });
+    };
+
+    load(true);
+    return () => {
+      cancelled = true;
+    };
+  }, [cardBackSrc]);
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -98,14 +125,30 @@ export function Card3DViewer({
           WebkitBackfaceVisibility: "hidden",
           transform: "rotateY(180deg) translateZ(0.5px)",
           filter: faceShadow,
+          borderRadius: "4.5%",
+          overflow: "hidden",
+          background: "#1a2238",
         }}
       >
-        <img
-          src={cardBackSrc}
-          alt=""
-          draggable={false}
-          style={{ display: "block", width: "100%", height: "100%", objectFit: "contain" }}
-        />
+        {backReady ? (
+          <img
+            src={cardBackSrc}
+            alt=""
+            draggable={false}
+            className="portrait-fade-in"
+            style={{ display: "block", width: "100%", height: "100%", objectFit: "contain" }}
+          />
+        ) : (
+          <div
+            className="portrait-shimmer"
+            style={{
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(145deg, #2a3550 0%, #1a2238 50%, #3a2f1a 100%)",
+            }}
+            aria-hidden
+          />
+        )}
       </div>
     </div>
   );

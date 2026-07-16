@@ -2,7 +2,8 @@ import { useMemo, useRef, useEffect, useState, type CSSProperties } from "react"
 import { AnimatePresence, motion } from "motion/react";
 import { fetchAlbum, type AlbumResponse } from "@/lib/albumApi";
 import { getCatalogEntry } from "@/lib/cardCatalog";
-import { DEFAULT_CARD_BACK_ID } from "@/lib/cardBacks";
+import { DEFAULT_CARD_BACK_ID, resolveCardBack } from "@/lib/cardBacks";
+import { preloadImages } from "@/lib/preloadImage";
 import { SERIES, seriesIdFromSlug, seriesCatalogOrder } from "@/lib/seriesMeta";
 import type { AlbumViewState, CardDef } from "./types";
 import { CFG } from "./rarityConfig";
@@ -128,6 +129,11 @@ export default function App() {
         })
         .filter((c): c is CardDef => c !== null);
       setDisplayCards(owned);
+      const warmUrls = [
+        ...owned.map((c) => c.portrait).filter((u): u is string => Boolean(u)),
+        ...owned.map((c) => resolveCardBack(c.cardBackId)),
+      ];
+      void preloadImages(warmUrls);
     })();
 
     return () => {

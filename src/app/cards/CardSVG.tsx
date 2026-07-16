@@ -1,4 +1,5 @@
-import { useMemo, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { isImagePreloaded, preloadImage } from "@/lib/preloadImage";
 import type { RarityKey } from "../types";
 import { CFG } from "../rarityConfig";
 import { srng } from "../utils";
@@ -16,6 +17,23 @@ export function CardSVG({ rarity, portrait, princessName, mythicVariant = 1 }: {
   const imgX = 20, imgY = 80, imgW = 310, imgH = 330;
   const bpY = imgY + imgH + 6;
   const bpH = Math.max(H - fw - 4 - bpY, 36);
+
+  const [portraitReady, setPortraitReady] = useState(() => isImagePreloaded(portrait));
+
+  useEffect(() => {
+    let cancelled = false;
+    setPortraitReady(isImagePreloaded(portrait));
+    void preloadImage(portrait)
+      .then(() => {
+        if (!cancelled) setPortraitReady(true);
+      })
+      .catch(() => {
+        /* keep slot empty; frame still shows */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [portrait]);
 
   const particles = useMemo(() => {
     const pts: Array<{ x: number; y: number; r: number; op: number }> = [];
@@ -303,9 +321,31 @@ export function CardSVG({ rarity, portrait, princessName, mythicVariant = 1 }: {
         <rect x={imgX - 5} y={imgY - 5} width={imgW + 10} height={imgH + 10} rx="11"
           fill={c.glowCol} opacity="0.1" filter={`url(#glw${uid})`} />
       )}
-      <rect x={imgX} y={imgY} width={imgW} height={imgH} rx="7" fill="white" />
-      <image href={portrait} x={imgX} y={imgY} width={imgW} height={imgH}
-        preserveAspectRatio="xMidYMid slice" clipPath={`url(#ic${uid})`} />
+      <rect x={imgX} y={imgY} width={imgW} height={imgH} rx="7" fill={c.bgEdge} />
+      {!portraitReady && (
+        <rect
+          className="portrait-shimmer"
+          x={imgX}
+          y={imgY}
+          width={imgW}
+          height={imgH}
+          rx="7"
+          fill={c.goldBase}
+          clipPath={`url(#ic${uid})`}
+        />
+      )}
+      {portraitReady && (
+        <image
+          className="portrait-fade-in"
+          href={portrait}
+          x={imgX}
+          y={imgY}
+          width={imgW}
+          height={imgH}
+          preserveAspectRatio="xMidYMid slice"
+          clipPath={`url(#ic${uid})`}
+        />
+      )}
       <rect x={imgX} y={imgY} width={imgW} height={imgH} rx="7"
         fill="none" stroke={`url(#gv${uid})`} strokeWidth="2.5" />
       <rect x={imgX + 3} y={imgY + 3} width={imgW - 6} height={imgH - 6} rx="5"
