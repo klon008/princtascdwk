@@ -1,9 +1,9 @@
 /**
  * Каталог рубашек серий.
- * id совпадает с card_series.card_back_id и файлом imports/{id}.{svg|webp}
+ * id совпадает с card_series.card_back_id и файлом imports/{id}.svg
  */
 import defaultBack from "@/imports/card-back.svg";
-import classicBack from "@/imports/card-back-classic.webp";
+import classicBack from "@/imports/card-back-classic.svg";
 // series-pack:generated:back-imports:start
 // series-pack:generated:back-imports:end
 
