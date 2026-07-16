@@ -111,7 +111,6 @@ export default function App() {
         return;
       }
       setAlbumData(result.data);
-      setAlbumView("album");
       setSelectedSeriesId(null);
       const owned = result.data.cards
         .map((c): CardDef | null => {
@@ -128,12 +127,19 @@ export default function App() {
           };
         })
         .filter((c): c is CardDef => c !== null);
+
+      // Keep loading screen until portraits are decoded — avoids white/shimmer cascade.
+      const portraitUrls = owned
+        .map((c) => c.portrait)
+        .filter((u): u is string => Boolean(u));
+      await preloadImages(portraitUrls);
+      if (cancelled) return;
+
       setDisplayCards(owned);
-      const warmUrls = [
-        ...owned.map((c) => c.portrait).filter((u): u is string => Boolean(u)),
-        ...owned.map((c) => resolveCardBack(c.cardBackId)),
-      ];
-      void preloadImages(warmUrls);
+      setAlbumView("album");
+
+      // Card backs only needed in 3D modal — warm in background.
+      void preloadImages(owned.map((c) => resolveCardBack(c.cardBackId)));
     })();
 
     return () => {
