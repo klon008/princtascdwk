@@ -136,7 +136,7 @@ export function Card3DViewer({
             alt=""
             draggable={false}
             className="portrait-fade-in"
-            style={{ display: "block", width: "100%", height: "100%", objectFit: "contain" }}
+            style={{ display: "block", width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (
           <div

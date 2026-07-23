@@ -59,6 +59,33 @@ import classicAnnaImg from "@/imports/classic-anna.webp";
 import classicBruniImg from "@/imports/classic-bruni.webp";
 import classicElsaSpiritImg from "@/imports/classic-elsa-spirit.webp";
 // series-pack:generated:imports:start
+import resortAuroraImg from "@/imports/resort-aurora.webp";
+import resortAlisaImg from "@/imports/resort-alisa.webp";
+import resortAnnaImg from "@/imports/resort-anna.webp";
+import resortArielImg from "@/imports/resort-ariel.webp";
+import resortBelleImg from "@/imports/resort-belle.webp";
+import resortSnowWhiteImg from "@/imports/resort-snow-white.webp";
+import resortVanellopeImg from "@/imports/resort-vanellope.webp";
+import resortJaneImg from "@/imports/resort-jane.webp";
+import resortJasmineImg from "@/imports/resort-jasmine.webp";
+import resortCinderellaImg from "@/imports/resort-cinderella.webp";
+import resortCassandraImg from "@/imports/resort-cassandra.webp";
+import resortKidaImg from "@/imports/resort-kida.webp";
+import resortMegaraImg from "@/imports/resort-megara.webp";
+import resortMeridaImg from "@/imports/resort-merida.webp";
+import resortMirabelImg from "@/imports/resort-mirabel.webp";
+import resortMoanaImg from "@/imports/resort-moana.webp";
+import resortMulanImg from "@/imports/resort-mulan.webp";
+import resortNaniImg from "@/imports/resort-nani.webp";
+import resortOlafImg from "@/imports/resort-olaf.webp";
+import resortPocahontasImg from "@/imports/resort-pocahontas.webp";
+import resortRapunzelImg from "@/imports/resort-rapunzel.webp";
+import resortSebastianImg from "@/imports/resort-sebastian.webp";
+import resortTianaImg from "@/imports/resort-tiana.webp";
+import resortHoneyLemonImg from "@/imports/resort-honey-lemon.webp";
+import resortElsaImg from "@/imports/resort-elsa.webp";
+import resortChillingElsaImg from "@/imports/resort-chilling-elsa.webp";
+import resortEsmeraldaImg from "@/imports/resort-esmeralda.webp";
 // series-pack:generated:imports:end
 
 export interface CatalogEntry {
@@ -133,7 +160,35 @@ export const CATALOG_ORDER: string[] = [
   "classic-bruni",
   "classic-elsa-spirit",
   // series-pack:generated:order:start
-  // series-pack:generated:order:end
+  
+  "resort-aurora",
+  "resort-alisa",
+  "resort-anna",
+  "resort-ariel",
+  "resort-belle",
+  "resort-snow-white",
+  "resort-vanellope",
+  "resort-jane",
+  "resort-jasmine",
+  "resort-cinderella",
+  "resort-cassandra",
+  "resort-kida",
+  "resort-megara",
+  "resort-merida",
+  "resort-mirabel",
+  "resort-moana",
+  "resort-mulan",
+  "resort-nani",
+  "resort-olaf",
+  "resort-pocahontas",
+  "resort-rapunzel",
+  "resort-sebastian",
+  "resort-tiana",
+  "resort-honey-lemon",
+  "resort-elsa",
+  "resort-chilling-elsa",
+  "resort-esmeralda",
+// series-pack:generated:order:end
 ];
 
 const PORTRAITS: Record<string, string> = {
@@ -196,7 +251,35 @@ const PORTRAITS: Record<string, string> = {
   "classic-bruni": classicBruniImg,
   "classic-elsa-spirit": classicElsaSpiritImg,
   // series-pack:generated:portraits:start
-  // series-pack:generated:portraits:end
+  
+  "resort-aurora": resortAuroraImg,
+  "resort-alisa": resortAlisaImg,
+  "resort-anna": resortAnnaImg,
+  "resort-ariel": resortArielImg,
+  "resort-belle": resortBelleImg,
+  "resort-snow-white": resortSnowWhiteImg,
+  "resort-vanellope": resortVanellopeImg,
+  "resort-jane": resortJaneImg,
+  "resort-jasmine": resortJasmineImg,
+  "resort-cinderella": resortCinderellaImg,
+  "resort-cassandra": resortCassandraImg,
+  "resort-kida": resortKidaImg,
+  "resort-megara": resortMegaraImg,
+  "resort-merida": resortMeridaImg,
+  "resort-mirabel": resortMirabelImg,
+  "resort-moana": resortMoanaImg,
+  "resort-mulan": resortMulanImg,
+  "resort-nani": resortNaniImg,
+  "resort-olaf": resortOlafImg,
+  "resort-pocahontas": resortPocahontasImg,
+  "resort-rapunzel": resortRapunzelImg,
+  "resort-sebastian": resortSebastianImg,
+  "resort-tiana": resortTianaImg,
+  "resort-honey-lemon": resortHoneyLemonImg,
+  "resort-elsa": resortElsaImg,
+  "resort-chilling-elsa": resortChillingElsaImg,
+  "resort-esmeralda": resortEsmeraldaImg,
+// series-pack:generated:portraits:end
 };
 
 const NAMES: Record<string, string> = {
@@ -259,7 +342,35 @@ const NAMES: Record<string, string> = {
   "classic-bruni": "Бруни",
   "classic-elsa-spirit": "Домашняя Эльза",
   // series-pack:generated:names:start
-  // series-pack:generated:names:end
+  
+  "resort-aurora": "Пляжная Аврора",
+  "resort-alisa": "Пляжная Алиса",
+  "resort-anna": "Пляжная Анна",
+  "resort-ariel": "Пляжная Ариэль",
+  "resort-belle": "Пляжная Белль",
+  "resort-snow-white": "Пляжная Белоснежка",
+  "resort-vanellope": "Пляжная Ванилопа",
+  "resort-jane": "Пляжная Джейн",
+  "resort-jasmine": "Пляжная Жасмин",
+  "resort-cinderella": "Пляжная Золушка",
+  "resort-cassandra": "Пляжная Кассандра",
+  "resort-kida": "Пляжная Кида",
+  "resort-megara": "Пляжная Мегара",
+  "resort-merida": "Пляжная Мерида",
+  "resort-mirabel": "Пляжная Мирабель",
+  "resort-moana": "Пляжная Моана",
+  "resort-mulan": "Пляжная Мулан",
+  "resort-nani": "Пляжная Нани",
+  "resort-olaf": "Пляжный Олаф",
+  "resort-pocahontas": "Пляжная Покахонтас",
+  "resort-rapunzel": "Пляжная Рапунцель",
+  "resort-sebastian": "Пляжный Себастьян",
+  "resort-tiana": "Пляжная Тиана",
+  "resort-honey-lemon": "Пляжная Хани Лемон",
+  "resort-elsa": "Пляжная Эльза",
+  "resort-chilling-elsa": "Уставшая Эльза",
+  "resort-esmeralda": "Пляжная Эсмеральда",
+// series-pack:generated:names:end
 };
 
 const RARITIES: Record<string, RarityKey> = {
@@ -323,13 +434,69 @@ const RARITIES: Record<string, RarityKey> = {
   "classic-bruni": "legendary",
   "classic-elsa-spirit": "mythic",
   // series-pack:generated:rarities:start
-  // series-pack:generated:rarities:end
+  
+  "resort-aurora": "rare",
+  "resort-alisa": "uncommon",
+  "resort-anna": "epic",
+  "resort-ariel": "uncommon",
+  "resort-belle": "uncommon",
+  "resort-snow-white": "common",
+  "resort-vanellope": "rare",
+  "resort-jane": "uncommon",
+  "resort-jasmine": "uncommon",
+  "resort-cinderella": "rare",
+  "resort-cassandra": "epic",
+  "resort-kida": "rare",
+  "resort-megara": "rare",
+  "resort-merida": "uncommon",
+  "resort-mirabel": "common",
+  "resort-moana": "uncommon",
+  "resort-mulan": "common",
+  "resort-nani": "common",
+  "resort-olaf": "common",
+  "resort-pocahontas": "legendary",
+  "resort-rapunzel": "epic",
+  "resort-sebastian": "common",
+  "resort-tiana": "common",
+  "resort-honey-lemon": "epic",
+  "resort-elsa": "legendary",
+  "resort-chilling-elsa": "mythic",
+  "resort-esmeralda": "common",
+// series-pack:generated:rarities:end
 };
 
 /** Явная привязка slug → series (для серий без префикса / импортера). classic-* ещё и через prefix. */
 const SERIES_OF: Record<string, string> = {
   // series-pack:generated:seriesOf:start
-  // series-pack:generated:seriesOf:end
+  
+  "resort-aurora": "summer-2026",
+  "resort-alisa": "summer-2026",
+  "resort-anna": "summer-2026",
+  "resort-ariel": "summer-2026",
+  "resort-belle": "summer-2026",
+  "resort-snow-white": "summer-2026",
+  "resort-vanellope": "summer-2026",
+  "resort-jane": "summer-2026",
+  "resort-jasmine": "summer-2026",
+  "resort-cinderella": "summer-2026",
+  "resort-cassandra": "summer-2026",
+  "resort-kida": "summer-2026",
+  "resort-megara": "summer-2026",
+  "resort-merida": "summer-2026",
+  "resort-mirabel": "summer-2026",
+  "resort-moana": "summer-2026",
+  "resort-mulan": "summer-2026",
+  "resort-nani": "summer-2026",
+  "resort-olaf": "summer-2026",
+  "resort-pocahontas": "summer-2026",
+  "resort-rapunzel": "summer-2026",
+  "resort-sebastian": "summer-2026",
+  "resort-tiana": "summer-2026",
+  "resort-honey-lemon": "summer-2026",
+  "resort-elsa": "summer-2026",
+  "resort-chilling-elsa": "summer-2026",
+  "resort-esmeralda": "summer-2026",
+// series-pack:generated:seriesOf:end
 };
 
 function resolveSeriesId(slug: string): string {

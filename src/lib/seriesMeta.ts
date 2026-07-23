@@ -24,7 +24,14 @@ export const SERIES: Record<SeriesId, SeriesMeta> = {
     boosterLabel: "Серия «Классический набор» · Тираж № 001",
   },
   // series-pack:generated:series:start
-  // series-pack:generated:series:end
+  
+  "summer-2026": {
+    id: "summer-2026",
+    name: "Пляжный сезон",
+    cardBackId: "card-back-summer-2026",
+    boosterLabel: "Серия «Пляжный сезон» · Тираж № 001",
+  },
+// series-pack:generated:series:end
 };
 
 export function seriesIdFromSlug(slug: string | undefined): SeriesId {
