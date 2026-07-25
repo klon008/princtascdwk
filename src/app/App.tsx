@@ -135,6 +135,8 @@ export default function App() {
     const u = params.get("u");
     if (!u || !params.get("k") || !params.get("exp")) {
       if (!soft) {
+        // Hard load may supersede an in-flight soft refresh (e.g. effect cleanup bumped gen).
+        setRefreshing(false);
         setAlbumView("landing");
         setDisplayCards([]);
       }
@@ -145,6 +147,8 @@ export default function App() {
     if (soft) {
       setRefreshing(true);
     } else {
+      // Drop soft-refresh spinner — superseded soft finally won't clear it (stale gen).
+      setRefreshing(false);
       setAlbumView("loading");
     }
 
@@ -186,7 +190,9 @@ export default function App() {
       // Card backs only needed in 3D modal — warm in background.
       void preloadImages(owned.map((c) => resolveCardBack(c.cardBackId)));
     } finally {
-      if (soft && gen === loadGenRef.current) {
+      // Soft: clear only if still latest (a newer soft owns the spinner otherwise).
+      // Hard: clear if still latest (covers any path that didn't reset at start).
+      if (gen === loadGenRef.current) {
         setRefreshing(false);
       }
     }
