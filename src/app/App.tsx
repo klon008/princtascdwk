@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useMemo, useRef, useEffect, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { fetchAlbum, type AlbumResponse } from "@/lib/albumApi";
 import { getCatalogEntry } from "@/lib/cardCatalog";
@@ -15,28 +15,61 @@ import { CardBackTile } from "./cards/CardBackTile";
 import { CardModal } from "./CardModal";
 import { SeriesFilterBar, type SeriesFilterItem } from "./SeriesFilterBar";
 import { FilterIcon } from "./icons/FilterIcon";
+import { RefreshIcon } from "./icons/RefreshIcon";
 import { SortTriangleIcon } from "./icons/SortTriangleIcon";
 
 type SortMode = "off" | "asc" | "desc";
+
+function mapOwnedCards(data: AlbumResponse): CardDef[] {
+  return data.cards
+    .map((c): CardDef | null => {
+      const entry = getCatalogEntry(c.id);
+      if (!entry) return null;
+      return {
+        princess: c.name,
+        slug: c.id,
+        rarity: c.rarity,
+        portrait: entry.portrait,
+        obtainedDate: c.d,
+        booster: c.b,
+        cardBackId: c.card_back_id || DEFAULT_CARD_BACK_ID,
+      };
+    })
+    .filter((c): c is CardDef => c !== null);
+}
 
 const toolbarIconBtnClass = (active: boolean) =>
   [
     "inline-flex items-center justify-center rounded-full p-1 cursor-pointer align-middle",
     "transition-[color,background-color,opacity] duration-200",
     "focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[#D4AF37]",
+    "disabled:opacity-60 disabled:cursor-wait disabled:pointer-events-none",
     active
       ? "text-[#D4AF37] bg-[rgba(212,175,55,0.14)]"
       : "text-[#465577] opacity-80 hover:opacity-100 hover:text-[#8494BC] hover:bg-[rgba(132,148,188,0.08)]",
   ].join(" ");
 
-/** Крохотные инлайн-переключатели фильтра по сериям и сортировки по редкости в строке сводки. */
-function AlbumToolbarIcons({ showFilter, filterOpen, onToggleFilter, sortMode, sortAriaLabel, onCycleSort }: {
+/** Крохотные инлайн-переключатели фильтра, сортировки и обновления в строке сводки. */
+function AlbumToolbarIcons({
+  showFilter,
+  filterOpen,
+  onToggleFilter,
+  sortMode,
+  sortAriaLabel,
+  onCycleSort,
+  showRefresh = false,
+  refreshing = false,
+  onRefresh,
+}: {
   showFilter: boolean;
   filterOpen: boolean;
   onToggleFilter: () => void;
   sortMode: SortMode;
   sortAriaLabel: string;
   onCycleSort: () => void;
+  showRefresh?: boolean;
+  refreshing?: boolean;
+  onRefresh?: () => void;
 }) {
   return (
     <span className="inline-flex items-center gap-1 ml-1.5 align-middle">
@@ -63,12 +96,29 @@ function AlbumToolbarIcons({ showFilter, filterOpen, onToggleFilter, sortMode, s
           style={{ transform: sortMode === "desc" ? "rotate(180deg)" : undefined, transition: "transform 0.25s" }}
         />
       </button>
+      {showRefresh && onRefresh && (
+        <button
+          type="button"
+          aria-label="Обновить альбом"
+          aria-busy={refreshing}
+          disabled={refreshing}
+          onClick={onRefresh}
+          className={toolbarIconBtnClass(false)}
+        >
+          <RefreshIcon
+            width={14}
+            height={14}
+            className={refreshing ? "animate-spin" : undefined}
+          />
+        </button>
+      )}
     </span>
   );
 }
 
 export default function App() {
   const tileRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const loadGenRef = useRef(0);
   const [selectedCard, setSelectedCard] = useState<CardDef | null>(null);
   const [albumView, setAlbumView] = useState<AlbumViewState>("landing");
   const [albumData, setAlbumData] = useState<AlbumResponse | null>(null);
@@ -76,76 +126,78 @@ export default function App() {
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
   const [filterBarOpen, setFilterBarOpen] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>("off");
+  const [refreshing, setRefreshing] = useState(false);
 
   const albumSecret = import.meta.env.VITE_ALBUM_LINK_SECRET ?? "";
 
-  useEffect(() => {
+  const loadAlbum = useCallback(async ({ soft = false }: { soft?: boolean } = {}) => {
     const params = new URLSearchParams(window.location.search);
     const u = params.get("u");
-    if (!u) {
-      setAlbumView("landing");
-      setDisplayCards([]);
-      return;
-    }
-    if (!params.get("k") || !params.get("exp")) {
-      setAlbumView("landing");
-      setDisplayCards([]);
-      return;
-    }
-
-    let cancelled = false;
-    setAlbumView("loading");
-
-    void (async () => {
-      const result = await fetchAlbum(params, albumSecret);
-      if (cancelled) return;
-      if (!result.ok) {
-        setAlbumView(
-          result.error === "unauthorized"
-            ? "unauthorized"
-            : result.error === "not_found"
-              ? "not_found"
-              : "offline",
-        );
+    if (!u || !params.get("k") || !params.get("exp")) {
+      if (!soft) {
+        setAlbumView("landing");
         setDisplayCards([]);
+      }
+      return;
+    }
+
+    const gen = ++loadGenRef.current;
+    if (soft) {
+      setRefreshing(true);
+    } else {
+      setAlbumView("loading");
+    }
+
+    try {
+      const result = await fetchAlbum(params, albumSecret);
+      if (gen !== loadGenRef.current) return;
+
+      if (!result.ok) {
+        if (!soft) {
+          setAlbumView(
+            result.error === "unauthorized"
+              ? "unauthorized"
+              : result.error === "not_found"
+                ? "not_found"
+                : "offline",
+          );
+          setDisplayCards([]);
+        }
         return;
       }
-      setAlbumData(result.data);
-      setSelectedSeriesId(null);
-      const owned = result.data.cards
-        .map((c): CardDef | null => {
-          const entry = getCatalogEntry(c.id);
-          if (!entry) return null;
-          return {
-            princess: c.name,
-            slug: c.id,
-            rarity: c.rarity,
-            portrait: entry.portrait,
-            obtainedDate: c.d,
-            booster: c.b,
-            cardBackId: c.card_back_id || DEFAULT_CARD_BACK_ID,
-          };
-        })
-        .filter((c): c is CardDef => c !== null);
+
+      const owned = mapOwnedCards(result.data);
 
       // Keep loading screen until portraits are decoded — avoids white/shimmer cascade.
       const portraitUrls = owned
         .map((c) => c.portrait)
-        .filter((u): u is string => Boolean(u));
+        .filter((url): url is string => Boolean(url));
       await preloadImages(portraitUrls);
-      if (cancelled) return;
+      if (gen !== loadGenRef.current) return;
 
+      setAlbumData(result.data);
+      setSelectedSeriesId((prev) => {
+        if (!soft) return null;
+        return prev && result.data.series.some((s) => s.id === prev) ? prev : null;
+      });
       setDisplayCards(owned);
       setAlbumView("album");
 
       // Card backs only needed in 3D modal — warm in background.
       void preloadImages(owned.map((c) => resolveCardBack(c.cardBackId)));
-    })();
-
-    return () => {
-      cancelled = true;
-    };
+    } finally {
+      if (soft && gen === loadGenRef.current) {
+        setRefreshing(false);
+      }
+    }
   }, [albumSecret]);
+
+  useEffect(() => {
+    void loadAlbum({ soft: false });
+    return () => {
+      loadGenRef.current += 1;
+    };
+  }, [loadAlbum]);
 
   const showPreviewGrid = import.meta.env.DEV && albumView === "landing";
   const baseCards = albumView === "album" ? displayCards : showPreviewGrid ? CARDS : [];
@@ -294,6 +346,9 @@ export default function App() {
                 sortMode={sortMode}
                 sortAriaLabel={sortAriaLabel}
                 onCycleSort={cycleSortMode}
+                showRefresh
+                refreshing={refreshing}
+                onRefresh={() => void loadAlbum({ soft: true })}
               />
             </>
           ) : albumView === "loading" ? (
