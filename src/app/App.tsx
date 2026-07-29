@@ -325,7 +325,7 @@ export default function App() {
             className="fixed inset-0 pointer-events-none"
             style={{
               background:
-                "linear-gradient(180deg, rgba(2,12,26,0.72) 0%, rgba(3,18,34,0.58) 45%, rgba(2,10,22,0.78) 100%)",
+                "linear-gradient(180deg, rgba(2,12,26,0.72) 0%, rgba(3,18,34,0.18) 45%, rgba(2,10,22,0.78) 100%)",
             }}
             aria-hidden
           />
