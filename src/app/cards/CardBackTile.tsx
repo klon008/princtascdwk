@@ -27,7 +27,7 @@ export function CardBackTile({ idx, tileRef }: {
               draggable={false}
             />
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="rarity-badge flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#D4AF37", boxShadow: "0 0 5px #D4AF37" }} />
             <span className="type-label type-label--tile" style={{ color: "#D4AF37" }}>
               Рубашка

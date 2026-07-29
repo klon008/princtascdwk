@@ -77,6 +77,12 @@
   -webkit-backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
 }
+/* Keep screen-blend FX inside the card — otherwise they punch through bright page bg */
+.card-tilt-target,
+.card-art,
+.card-svg {
+  isolation: isolate;
+}
 .card-svg {
   display: block;
   shape-rendering: geometricPrecision;

@@ -46,8 +46,8 @@ export function CardTile({ princess, rarity, idx, tileRef, portrait, onClick }: 
         <CardSVG rarity={rarity} portrait={portrait ?? fallbackPortrait} princessName={princess} />
       </div>
 
-      {/* Rarity badge */}
-      <div className="flex flex-col items-center gap-0.5">
+      {/* Rarity badge — summer chip styles live in summerTheme.css (.theme-summer .rarity-badge) */}
+      <div className="rarity-badge flex flex-col items-center gap-0.5">
         <div className="flex items-center gap-1.5">
           <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
             style={{ background: cfg.color, boxShadow: `0 0 5px ${cfg.color}` }} />

@@ -26,7 +26,7 @@ export function SeriesFilterBar({ items, selectedId, onSelect }: SeriesFilterBar
             aria-pressed={isActive}
             onClick={() => onSelect(item.id)}
             className={[
-              "flex flex-col gap-1.5 px-3.5 py-2 rounded-xl min-w-[128px] cursor-pointer",
+              "series-filter-btn flex flex-col gap-1.5 px-3.5 py-2 rounded-xl min-w-[128px] cursor-pointer",
               "transition-[color,background-color,border-color,opacity] duration-200",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]",
             ].join(" ")}
@@ -36,14 +36,14 @@ export function SeriesFilterBar({ items, selectedId, onSelect }: SeriesFilterBar
             }}
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="type-label truncate" style={{ color: isActive ? "#D4AF37" : "#8494BC" }}>
+              <span className="series-filter-name type-label truncate" style={{ color: isActive ? "#D4AF37" : "#8494BC" }}>
                 {item.name}
               </span>
-              <span className="type-meta whitespace-nowrap" style={{ color: isActive ? "#D4AF37" : "#5C6C94", opacity: isActive ? 0.85 : 0.6 }}>
+              <span className="series-filter-count type-meta whitespace-nowrap" style={{ color: isActive ? "#D4AF37" : "#5C6C94", opacity: isActive ? 0.85 : 0.6 }}>
                 {item.owned}/{item.total}
               </span>
             </div>
-            <div className="h-[3px] w-full rounded-full overflow-hidden" style={{ background: "rgba(132,148,188,0.15)" }}>
+            <div className="series-filter-track h-[3px] w-full rounded-full overflow-hidden" style={{ background: "rgba(132,148,188,0.15)" }}>
               <div
                 className="h-full rounded-full transition-[width] duration-500"
                 style={{

@@ -17,6 +17,8 @@ import { SeriesFilterBar, type SeriesFilterItem } from "./SeriesFilterBar";
 import { FilterIcon } from "./icons/FilterIcon";
 import { RefreshIcon } from "./icons/RefreshIcon";
 import { SortTriangleIcon } from "./icons/SortTriangleIcon";
+import { isSummerTheme } from "./pageTheme";
+import bgSummer from "@/imports/bg-summer.jpg";
 
 type SortMode = "off" | "asc" | "desc";
 
@@ -46,7 +48,7 @@ const toolbarIconBtnClass = (active: boolean) =>
     "disabled:opacity-60 disabled:cursor-wait disabled:pointer-events-none",
     active
       ? "text-[#D4AF37] bg-[rgba(212,175,55,0.14)]"
-      : "text-[#465577] opacity-80 hover:opacity-100 hover:text-[#8494BC] hover:bg-[rgba(132,148,188,0.08)]",
+      : "toolbar-icon-idle text-[#465577] opacity-80 hover:opacity-100 hover:text-[#8494BC] hover:bg-[rgba(132,148,188,0.08)]",
   ].join(" ");
 
 /** Крохотные инлайн-переключатели фильтра, сортировки и обновления в строке сводки. */
@@ -311,65 +313,62 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#030610] relative">
-      {/* Star field */}
-      <svg className="fixed inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-        {stars.map((s, i) => (
-          <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.s} fill="#D4AF37" opacity={s.o}
-            style={{ "--op": s.o, animation: `twinkle ${s.d}s ${i * 0.12}s ease-in-out infinite` } as CSSProperties} />
-        ))}
-      </svg>
+    <div className={`min-h-screen relative ${isSummerTheme ? "theme-summer bg-[#1a4a6e]" : "bg-[#030610]"}`}>
+      {isSummerTheme ? (
+        <>
+          <div
+            className="fixed inset-0 pointer-events-none bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${bgSummer})` }}
+            aria-hidden
+          />
+          <div
+            className="fixed inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(2,12,26,0.72) 0%, rgba(3,18,34,0.58) 45%, rgba(2,10,22,0.78) 100%)",
+            }}
+            aria-hidden
+          />
+        </>
+      ) : (
+        <>
+          {/* Star field */}
+          <svg className="fixed inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+            {stars.map((s, i) => (
+              <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.s} fill="#D4AF37" opacity={s.o}
+                style={{ "--op": s.o, animation: `twinkle ${s.d}s ${i * 0.12}s ease-in-out infinite` } as CSSProperties} />
+            ))}
+          </svg>
 
-      {/* Atmospheric glows */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-32 left-1/4 w-[700px] h-[500px] rounded-full opacity-[0.035]"
-          style={{ background: "radial-gradient(ellipse, #4080E0, transparent)" }} />
-        <div className="absolute -bottom-32 right-1/4 w-[700px] h-[500px] rounded-full opacity-[0.035]"
-          style={{ background: "radial-gradient(ellipse, #9040E0, transparent)" }} />
-      </div>
+          {/* Atmospheric glows */}
+          <div className="fixed inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute -top-32 left-1/4 w-[700px] h-[500px] rounded-full opacity-[0.035]"
+              style={{ background: "radial-gradient(ellipse, #4080E0, transparent)" }} />
+            <div className="absolute -bottom-32 right-1/4 w-[700px] h-[500px] rounded-full opacity-[0.035]"
+              style={{ background: "radial-gradient(ellipse, #9040E0, transparent)" }} />
+          </div>
+        </>
+      )}
 
       {/* Header */}
       <header className="relative z-10 text-center px-4 pt-7 pb-6 sm:pt-10 sm:pb-8">
-        <p className="type-eyebrow type-eyebrow--hero text-[#3A4A6A] mb-2">
-          Дворцовая сокровищница
-        </p>
-        <h1 className="type-display-1"
-          style={{
-            background: "linear-gradient(135deg, #9A8050 0%, #F0D060 35%, #D4AF37 55%, #F0D060 75%, #9A8050 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}>
-          Enchanted Vault
-        </h1>
-        <p className="type-eyebrow mt-3 text-[#50608A]">
-          {albumView === "album" && albumData ? (
-            <>
-              @{albumData.u} · Коллекция {albumData.collection.owned} из {albumData.collection.total}
-              <AlbumToolbarIcons
-                showFilter={seriesFilterItems.length > 0}
-                filterOpen={filterBarOpen}
-                onToggleFilter={() => setFilterBarOpen((v) => !v)}
-                sortMode={sortMode}
-                sortAriaLabel={sortAriaLabel}
-                onCycleSort={cycleSortMode}
-                showRefresh
-                refreshing={refreshing}
-                onRefresh={() => void loadAlbum({ soft: true })}
-              />
-            </>
-          ) : albumView === "loading" ? (
-            "Загрузка альбома…"
-          ) : albumView === "offline" ? (
-            "Альбом доступен на стриме"
-          ) : albumView === "unauthorized" ? (
-            "Ссылка недействительна"
-          ) : albumView === "not_found" ? (
-            "Игрок не найден"
-          ) : albumView === "landing" ? (
-            showPreviewGrid ? (
+        <div className="album-header-scrim hidden" aria-hidden />
+        <div className="relative">
+          <p className="album-eyebrow-hero type-eyebrow type-eyebrow--hero text-[#3A4A6A] mb-2">
+            Дворцовая сокровищница
+          </p>
+          <h1 className="album-title type-display-1"
+            style={{
+              background: "linear-gradient(135deg, #9A8050 0%, #F0D060 35%, #D4AF37 55%, #F0D060 75%, #9A8050 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}>
+            Enchanted Vault
+          </h1>
+          <p className="album-eyebrow type-eyebrow mt-3 text-[#50608A]">
+            {albumView === "album" && albumData ? (
               <>
-                {ruCount(CARDS.length, ["карта", "карты", "карт"])} ·{" "}
-                {ruCount(Object.keys(CFG).length, ["редкость", "редкости", "редкостей"])} · предпросмотр
+                @{albumData.u} · Коллекция {albumData.collection.owned} из {albumData.collection.total}
                 <AlbumToolbarIcons
                   showFilter={seriesFilterItems.length > 0}
                   filterOpen={filterBarOpen}
@@ -377,41 +376,67 @@ export default function App() {
                   sortMode={sortMode}
                   sortAriaLabel={sortAriaLabel}
                   onCycleSort={cycleSortMode}
+                  showRefresh
+                  refreshing={refreshing}
+                  onRefresh={() => void loadAlbum({ soft: true })}
                 />
               </>
+            ) : albumView === "loading" ? (
+              "Загрузка альбома…"
+            ) : albumView === "offline" ? (
+              "Альбом доступен на стриме"
+            ) : albumView === "unauthorized" ? (
+              "Ссылка недействительна"
+            ) : albumView === "not_found" ? (
+              "Игрок не найден"
+            ) : albumView === "landing" ? (
+              showPreviewGrid ? (
+                <>
+                  {ruCount(CARDS.length, ["карта", "карты", "карт"])} ·{" "}
+                  {ruCount(Object.keys(CFG).length, ["редкость", "редкости", "редкостей"])} · предпросмотр
+                  <AlbumToolbarIcons
+                    showFilter={seriesFilterItems.length > 0}
+                    filterOpen={filterBarOpen}
+                    onToggleFilter={() => setFilterBarOpen((v) => !v)}
+                    sortMode={sortMode}
+                    sortAriaLabel={sortAriaLabel}
+                    onCycleSort={cycleSortMode}
+                  />
+                </>
+              ) : (
+                "Получите ссылку командой !альбом в чате стрима"
+              )
             ) : (
-              "Получите ссылку командой !альбом в чате стрима"
-            )
-          ) : (
-            <>
-              {ruCount(CARDS.length, ["карта", "карты", "карт"])} ·{" "}
-              {ruCount(Object.keys(CFG).length, ["редкость", "редкости", "редкостей"])}
-            </>
-          )}
-        </p>
-        <div className="flex items-center justify-center gap-2 sm:gap-3 mt-3 sm:mt-4 opacity-35">
-          <div className="h-px w-16 sm:w-28 md:w-44" style={{ background: "linear-gradient(to right, transparent, #D4AF37)" }} />
-          <svg width="14" height="14" viewBox="-7 -7 14 14">
-            <StarPoly cx={0} cy={0} r={6} n={8} inner={0.5} fill="#D4AF37" opacity={1} />
-          </svg>
-          <div className="h-px w-16 sm:w-28 md:w-44" style={{ background: "linear-gradient(to left, transparent, #D4AF37)" }} />
+              <>
+                {ruCount(CARDS.length, ["карта", "карты", "карт"])} ·{" "}
+                {ruCount(Object.keys(CFG).length, ["редкость", "редкости", "редкостей"])}
+              </>
+            )}
+          </p>
+          <div className="album-ornament flex items-center justify-center gap-2 sm:gap-3 mt-3 sm:mt-4 opacity-35">
+            <div className="h-px w-16 sm:w-28 md:w-44" style={{ background: "linear-gradient(to right, transparent, #D4AF37)" }} />
+            <svg width="14" height="14" viewBox="-7 -7 14 14">
+              <StarPoly cx={0} cy={0} r={6} n={8} inner={0.5} fill="#D4AF37" opacity={1} />
+            </svg>
+            <div className="h-px w-16 sm:w-28 md:w-44" style={{ background: "linear-gradient(to left, transparent, #D4AF37)" }} />
+          </div>
         </div>
       </header>
 
       {/* Card grid */}
       <main className="relative z-10 px-3 sm:px-5 md:px-6 pb-16 sm:pb-20">
         {albumView === "loading" && (
-          <p className="text-center type-eyebrow text-[#50608A] py-20">Загрузка альбома…</p>
+          <p className="album-status text-center type-eyebrow text-[#50608A] py-20">Загрузка альбома…</p>
         )}
         {(albumView === "offline" || albumView === "unauthorized" || albumView === "not_found") && (
-          <p className="text-center type-eyebrow text-[#50608A] py-20">
+          <p className="album-status text-center type-eyebrow text-[#50608A] py-20">
             {albumView === "offline" && "Альбом доступен на стриме — туннель выключен или API недоступен."}
             {albumView === "unauthorized" && "Ссылка недействительна или устарела."}
             {albumView === "not_found" && "Игрок не найден."}
           </p>
         )}
         {albumView === "landing" && !showPreviewGrid && (
-          <p className="text-center type-eyebrow text-[#50608A] max-w-lg mx-auto py-10">
+          <p className="album-status text-center type-eyebrow text-[#50608A] max-w-lg mx-auto py-10">
             Откройте альбом по персональной ссылке из чата GoodGame. Полный каталог карт здесь не показывается.
           </p>
         )}
@@ -455,29 +480,29 @@ export default function App() {
         </div>
         )}
         {albumView === "album" && displayCards.length === 0 && (
-          <p className="text-center type-eyebrow text-[#50608A] py-20">В альбоме пока нет карт.</p>
+          <p className="album-status text-center type-eyebrow text-[#50608A] py-20">В альбоме пока нет карт.</p>
         )}
         {albumView === "album" && displayCards.length > 0 && sortedCards.length === 0 && (
-          <p className="text-center type-eyebrow text-[#50608A] py-20">В этой серии пока нет полученных карт.</p>
+          <p className="album-status text-center type-eyebrow text-[#50608A] py-20">В этой серии пока нет полученных карт.</p>
         )}
 
         {/* Footer ornament */}
         <div className="text-center mt-14 flex flex-col items-center gap-2">
-          <div className="flex items-center gap-3 opacity-20">
+          <div className="album-footer-ornament flex items-center gap-3 opacity-20">
             <div className="h-px w-16" style={{ background: "linear-gradient(to right, transparent, #D4AF37)" }} />
             <svg width="10" height="10" viewBox="-5 -5 10 10">
               <StarPoly cx={0} cy={0} r={4} n={4} fill="#D4AF37" opacity={1} />
             </svg>
             <div className="h-px w-16" style={{ background: "linear-gradient(to left, transparent, #D4AF37)" }} />
           </div>
-          <p className="type-meta" style={{ color: "#5C6C94" }}>
+          <p className="album-meta type-meta" style={{ color: "#5C6C94" }}>
             {showPreviewGrid
               ? "Фантастический коллекционер · Классический набор"
               : albumData?.series?.length
                 ? albumData.series.map((s) => s.name).join(" · ")
                 : "Серия «Фантастический коллекционер» · Тираж № 001"}
           </p>
-          <p className="type-meta mt-1" style={{ color: "#465577" }}>
+          <p className="album-meta-dim type-meta mt-1" style={{ color: "#465577" }}>
             © 2026 klon008
           </p>
         </div>
