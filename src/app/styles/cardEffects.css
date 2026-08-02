@@ -60,16 +60,35 @@
   animation: portrait-fade-in 0.28s ease forwards;
 }
 
+.card-enter {
+  position: relative;
+}
 .card-tilt-scene {
   perspective: 900px;
   perspective-origin: center center;
+  transform-style: preserve-3d;
+  pointer-events: none; /* 3D must not steal clicks from neighbors */
+}
+.card-hit-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
 }
 .card-tilt-target {
+  /* 3D context smoothing */
   will-change: transform;
   transform-style: preserve-3d;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
+  /* Font blur fix when text is inside a transformed element */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 .card-art,
 .card-svg {
@@ -88,6 +107,8 @@
   shape-rendering: geometricPrecision;
 }
 .card-modal-tilt-scene {
+  /* Modal card / 3D viewer need pointer events; grid scenes keep none */
+  pointer-events: auto;
   overflow: visible;
   padding: 1.25rem 0.75rem;
   margin: -1.25rem -0.75rem;

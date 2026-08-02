@@ -83,73 +83,96 @@ export function Card3DViewer({
   const faceShadow = glowFilter ?? "drop-shadow(0 12px 32px rgba(0,0,0,0.85))";
 
   return (
+    // Wrapper keeps preserve-3d chain from .card-tilt-scene; hit layer stays untransformed
     <div
       role="img"
       aria-label="3D-карточка: перетащите, чтобы повернуть"
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
       style={{
         width: "100%",
         aspectRatio: "5/7",
         position: "relative",
         transformStyle: "preserve-3d",
-        transform: `rotateX(${rx}deg) rotateY(${ry}deg)`,
-        cursor: dragging ? "grabbing" : "grab",
-        touchAction: "none",
-        userSelect: "none",
-        transition: dragging ? "none" : "transform 0.15s ease-out",
+        pointerEvents: "auto",
       }}
     >
-      {/* Front — CardSVG */}
+      {/* Same 3D node as before — rotate + faces live together */}
       <div
+        aria-hidden
         style={{
-          position: "absolute",
-          inset: 0,
-          backfaceVisibility: "hidden",
-          WebkitBackfaceVisibility: "hidden",
-          transform: "translateZ(0.5px)",
-          filter: faceShadow,
+          width: "100%",
+          height: "100%",
+          position: "relative",
+          transformStyle: "preserve-3d",
+          transform: `rotateX(${rx}deg) rotateY(${ry}deg)`,
+          transition: dragging ? "none" : "transform 0.15s ease-out",
+          pointerEvents: "none",
         }}
       >
-        <CardSVG rarity={rarity} portrait={portrait} princessName={princessName} />
+        {/* Front — CardSVG */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "translateZ(0.5px)",
+            filter: faceShadow,
+          }}
+        >
+          <CardSVG rarity={rarity} portrait={portrait} princessName={princessName} />
+        </div>
+
+        {/* Back — рубашка */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(180deg) translateZ(0.5px)",
+            filter: faceShadow,
+            borderRadius: "4.5%",
+            overflow: "hidden",
+            background: "#1a2238",
+          }}
+        >
+          {backReady ? (
+            <img
+              src={cardBackSrc}
+              alt=""
+              draggable={false}
+              className="portrait-fade-in"
+              style={{ display: "block", width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <div
+              className="portrait-shimmer"
+              style={{
+                width: "100%",
+                height: "100%",
+                background: "linear-gradient(145deg, #2a3550 0%, #1a2238 50%, #3a2f1a 100%)",
+              }}
+              aria-hidden
+            />
+          )}
+        </div>
       </div>
 
-      {/* Back — рубашка */}
+      {/* Flat drag surface above the card — does not participate in 3D transform */}
       <div
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
         style={{
           position: "absolute",
           inset: 0,
-          backfaceVisibility: "hidden",
-          WebkitBackfaceVisibility: "hidden",
-          transform: "rotateY(180deg) translateZ(0.5px)",
-          filter: faceShadow,
-          borderRadius: "4.5%",
-          overflow: "hidden",
-          background: "#1a2238",
+          zIndex: 1,
+          cursor: dragging ? "grabbing" : "grab",
+          touchAction: "none",
+          userSelect: "none",
         }}
-      >
-        {backReady ? (
-          <img
-            src={cardBackSrc}
-            alt=""
-            draggable={false}
-            className="portrait-fade-in"
-            style={{ display: "block", width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        ) : (
-          <div
-            className="portrait-shimmer"
-            style={{
-              width: "100%",
-              height: "100%",
-              background: "linear-gradient(145deg, #2a3550 0%, #1a2238 50%, #3a2f1a 100%)",
-            }}
-            aria-hidden
-          />
-        )}
-      </div>
+      />
     </div>
   );
 }
