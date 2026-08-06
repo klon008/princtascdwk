@@ -1,0 +1,52 @@
+@import "../../assets/fonts/fishing/fishing-fonts.css";
+
+.fishing-page {
+  font-family: "Manrope", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.fishing-page ::-webkit-scrollbar {
+  width: 4px;
+}
+
+.fishing-page ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fishing-page ::-webkit-scrollbar-thumb {
+  background: rgba(120, 80, 30, 0.3);
+  border-radius: 4px;
+}
+
+.trophy-card-fish-wrap {
+  position: absolute;
+  top: 2%;
+  right: 0;
+  bottom: 2%;
+  width: 58%;
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trophy-card-fish-wrap--hero {
+  width: 50%;
+}
+
+.trophy-card-fish {
+  width: 112%;
+  height: 96%;
+  max-width: none;
+  object-fit: contain;
+  object-position: center;
+  user-select: none;
+  opacity: 0.32;
+  mix-blend-mode: multiply;
+}
+
+.trophy-card > *:not(.trophy-card-fish-wrap) {
+  position: relative;
+  z-index: 1;
+}
