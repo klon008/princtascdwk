@@ -1,44 +1,17 @@
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { Toaster, toast } from "sonner";
 import fishingBg from "@/assets/fishing/bg.jpg";
+import {
+  fetchFishingStats,
+  mapCatchRow,
+  type Catch,
+  type FishingFetchError,
+} from "@/lib/fishingApi";
 import { fishArt } from "./fishArt";
+import { FishingPixiBg } from "./FishingPixiBg";
+import { MOCK_ALL_TIME, MOCK_WEEKLY } from "./fishingMock";
 import "./fishing.css";
-
-interface Catch {
-  fish: string;
-  player: string;
-  weight: number;
-}
-
-const weekly: Catch[] = [
-  { fish: "Жерех", player: "klon_008", weight: 3.99 },
-  { fish: "Карась", player: "klon_008", weight: 0.79 },
-  { fish: "Лещ", player: "klon_008", weight: 1.9 },
-  { fish: "Линь", player: "klon_008", weight: 2.98 },
-  { fish: "Окунь", player: "Dartval", weight: 1.11 },
-  { fish: "Осётр", player: "Dartval", weight: 11.87 },
-  { fish: "Плотва", player: "Di.eS.", weight: 0.52 },
-  { fish: "Сазан", player: "klon_008", weight: 7.51 },
-  { fish: "Сом", player: "Leformana", weight: 7.14 },
-  { fish: "Судак", player: "HawaiiKa", weight: 4.18 },
-  { fish: "Щука", player: "klon_008", weight: 3.84 },
-  { fish: "Язь", player: "klon_008", weight: 2.76 },
-];
-
-const allTime: Catch[] = [
-  { fish: "Карась", player: "klon_008", weight: 0.79 },
-  { fish: "Плотва", player: "Di.eS.", weight: 0.52 },
-  { fish: "Окунь", player: "Di.eS.", weight: 1.01 },
-  { fish: "Линь", player: "Di.eS.", weight: 2.96 },
-  { fish: "Язь", player: "Dartval", weight: 2.21 },
-  { fish: "Лещ", player: "Di.eS.", weight: 1.29 },
-  { fish: "Сазан", player: "Leformana", weight: 5.59 },
-  { fish: "Жерех", player: "Magalouno", weight: 3.38 },
-  { fish: "Судак", player: "Di.eS.", weight: 4.17 },
-  { fish: "Щука", player: "klon_008", weight: 3.84 },
-  { fish: "Сом", player: "klon_008", weight: 6.91 },
-  { fish: "Осётр", player: "klon_008", weight: 3.94 },
-];
 
 const commands = [
   { cmd: "!рыбалка", desc: "Заброс (−15 энергии, −1 наживка)" },
@@ -164,7 +137,17 @@ function TrophyCard({ entry, rank, hero = false }: { entry: Catch; rank: number;
   );
 }
 
-function Section({ title, subtitle, catches }: { title: string; subtitle: string; catches: Catch[] }) {
+function Section({
+  title,
+  subtitle,
+  catches,
+  emptyHint,
+}: {
+  title: string;
+  subtitle: string;
+  catches: Catch[];
+  emptyHint?: string;
+}) {
   const sorted = [...catches].sort((a, b) => b.weight - a.weight);
   const [hero, ...rest] = sorted;
 
@@ -196,17 +179,46 @@ function Section({ title, subtitle, catches }: { title: string; subtitle: string
         <p style={{ color: "rgba(255,225,150,0.45)", fontSize: 13, fontWeight: 500, margin: 0 }}>{subtitle}</p>
       </div>
 
-      <div style={{ marginBottom: 14 }}>
-        <TrophyCard entry={hero} rank={1} hero />
-      </div>
+      {!hero ? (
+        <p
+          style={{
+            color: "rgba(255,225,150,0.55)",
+            fontSize: 14,
+            fontWeight: 500,
+            textAlign: "center",
+            padding: "32px 16px",
+            margin: 0,
+          }}
+        >
+          {emptyHint ?? "Пока нет записей"}
+        </p>
+      ) : (
+        <>
+          <div style={{ marginBottom: 14 }}>
+            <TrophyCard entry={hero} rank={1} hero />
+          </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(185px, 1fr))", gap: 12 }}>
-        {rest.map((c, i) => (
-          <TrophyCard key={c.fish} entry={c} rank={i + 2} />
-        ))}
-      </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(185px, 1fr))", gap: 12 }}>
+            {rest.map((c, i) => (
+              <TrophyCard key={c.fish} entry={c} rank={i + 2} />
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
+}
+
+function toastForError(error: FishingFetchError) {
+  if (error === "no_api") {
+    toast.error("Нет адреса API — откройте ссылку со стрима (?api=…)");
+    return;
+  }
+  if (error === "offline") {
+    toast.error("Бэкенд недоступен (туннель / бот)");
+    return;
+  }
+  toast.error("Не удалось загрузить статистику");
 }
 
 function GuideCard({ children, style }: { children: ReactNode; style?: CSSProperties }) {
@@ -544,35 +556,73 @@ function tabFromHash(hash: string): Tab {
 }
 
 export default function FishingPage() {
-  const { hash } = useLocation();
+  const { hash, search } = useLocation();
   const navigate = useNavigate();
   const tab = tabFromHash(hash);
+  const params = new URLSearchParams(search);
+  const isMaket = params.get("maket") === "true";
+
+  const [weekly, setWeekly] = useState<Catch[]>(isMaket ? MOCK_WEEKLY : []);
+  const [allTime, setAllTime] = useState<Catch[]>(isMaket ? MOCK_ALL_TIME : []);
+  const [loading, setLoading] = useState(!isMaket);
+  const [loadError, setLoadError] = useState<FishingFetchError | null>(null);
+  const loadGenRef = useRef(0);
 
   const setTab = (key: Tab) => {
-    navigate({ hash: key }, { replace: true });
+    navigate({ search, hash: key }, { replace: true });
   };
+
+  useEffect(() => {
+    if (isMaket) {
+      setWeekly(MOCK_WEEKLY);
+      setAllTime(MOCK_ALL_TIME);
+      setLoading(false);
+      setLoadError(null);
+      return;
+    }
+
+    const gen = ++loadGenRef.current;
+    const secret = import.meta.env.VITE_ALBUM_LINK_SECRET ?? "";
+    setLoading(true);
+    setLoadError(null);
+
+    void (async () => {
+      const result = await fetchFishingStats(new URLSearchParams(search), secret);
+      if (gen !== loadGenRef.current) return;
+
+      if (result.ok === false) {
+        setWeekly([]);
+        setAllTime([]);
+        setLoadError(result.error);
+        setLoading(false);
+        // В DEV без ?api= resolveApiBase даёт localhost — no_api там почти не бывает.
+        toastForError(result.error);
+        return;
+      }
+
+      setWeekly(result.data.week_leaders.map(mapCatchRow));
+      setAllTime(result.data.trophies.map(mapCatchRow));
+      setLoading(false);
+    })();
+  }, [isMaket, search]);
+
+  const emptyHint = loading
+    ? "Загрузка…"
+    : loadError === "no_api"
+      ? "Нет адреса API — откройте ссылку со стрима"
+      : loadError
+        ? "Не удалось загрузить данные"
+        : undefined;
 
   return (
     <div className="fishing-page" style={{ minHeight: "100vh", position: "relative", overflowX: "hidden" }}>
+      <Toaster richColors position="top-center" theme="dark" />
       <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 0,
-          backgroundImage: `url(${fishingBg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center 40%",
-        }}
+        className="fishing-bg"
+        style={{ ["--fishing-bg" as string]: `url(${fishingBg})` }}
       />
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 1,
-          background:
-            "linear-gradient(to bottom, rgba(10,25,10,0.3) 0%, rgba(30,18,5,0.55) 40%, rgba(18,10,2,0.78) 100%)",
-        }}
-      />
+      <FishingPixiBg />
+      <div className="fishing-bg-veil" />
 
       <div style={{ position: "relative", zIndex: 2, maxWidth: 900, margin: "0 auto", padding: "48px 20px 80px" }}>
         <div style={{ textAlign: "center", marginBottom: 40 }}>
@@ -591,7 +641,7 @@ export default function FishingPage() {
               marginBottom: 16,
             }}
           >
-            Игровая статистика · Рыбалка
+            Игровая статистика · Рыбалка{isMaket ? " · макет" : ""}
           </div>
           <h1
             style={{
@@ -646,10 +696,20 @@ export default function FishingPage() {
         </div>
 
         {tab === "weekly" && (
-          <Section title="Рекорды недели" subtitle="Лучший улов по каждому виду за текущую неделю" catches={weekly} />
+          <Section
+            title="Рекорды недели"
+            subtitle="Лучший улов по каждому виду за текущую неделю"
+            catches={weekly}
+            emptyHint={emptyHint}
+          />
         )}
         {tab === "alltime" && (
-          <Section title="Абсолютные рекорды" subtitle="Самые тяжёлые уловы за всё время" catches={allTime} />
+          <Section
+            title="Абсолютные рекорды"
+            subtitle="Самые тяжёлые уловы за всё время"
+            catches={allTime}
+            emptyHint={emptyHint}
+          />
         )}
         {tab === "guide" && <GuideView />}
 
