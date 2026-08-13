@@ -51,6 +51,166 @@
   z-index: 1;
 }
 
+.trophy-card--catch-trophy {
+  box-sizing: border-box;
+  border: 5.5px solid rgba(0, 172, 234, 0.8);
+}
+
+.trophy-card-catch-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  color: #00acea;
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.trophy-card--hero .trophy-card-catch-badge {
+  width: 56px;
+  height: 56px;
+}
+
+.trophy-card-catch-badge svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.trophy-card--clickable {
+  cursor: pointer;
+}
+
+.fish-info-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: rgba(8, 6, 2, 0.62);
+  backdrop-filter: blur(6px);
+}
+
+.fish-info-modal {
+  position: relative;
+  width: min(440px, 100%);
+  background: linear-gradient(146deg, #fdf8ee, #f7edd8);
+  border: 1.5px solid rgba(180, 130, 60, 0.28);
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 220, 0.75);
+  padding: 28px 28px 24px;
+  overflow: hidden;
+}
+
+.fish-info-art {
+  position: absolute;
+  top: 8%;
+  right: -4%;
+  bottom: 8%;
+  width: 58%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fish-info-art img {
+  width: 110%;
+  height: 90%;
+  object-fit: contain;
+  opacity: 0.28;
+  mix-blend-mode: multiply;
+}
+
+.fish-info-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(60, 40, 20, 0.08);
+  color: #5c3a10;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fish-info-close:hover {
+  background: rgba(60, 40, 20, 0.14);
+}
+
+.fish-info-name,
+.fish-info-latin,
+.fish-info-blurb,
+.fish-info-max {
+  position: relative;
+  z-index: 1;
+}
+
+.fish-info-name {
+  font-family: "Manrope", sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #2a1400;
+  margin: 0 36px 4px 0;
+  line-height: 1.15;
+}
+
+.fish-info-latin {
+  font-family: "Lora", Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #9a7040;
+  margin: 0 0 16px;
+}
+
+.fish-info-blurb {
+  font-size: 15px;
+  font-weight: 500;
+  color: #5c3a10;
+  line-height: 1.55;
+  margin: 0 0 20px;
+}
+
+.fish-info-max {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(160, 110, 40, 0.18);
+}
+
+.fish-info-max-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9a7040;
+}
+
+.fish-info-max-value {
+  font-family: "Lora", Georgia, serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #3a2000;
+  line-height: 1;
+}
+
+.fish-info-max-hint {
+  font-size: 13px;
+  font-weight: 600;
+  color: #00acea;
+  opacity: 0.85;
+}
+
 .fishing-pixi-host {
   position: fixed;
   inset: 0;

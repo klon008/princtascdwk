@@ -9,6 +9,8 @@ import {
   type FishingFetchError,
 } from "@/lib/fishingApi";
 import { fishArt } from "./fishArt";
+import { isCatchTrophy } from "./fishSpecies";
+import { FishInfoModal } from "./FishInfoModal";
 import { FishingPixiBg } from "./FishingPixiBg";
 import { MOCK_ALL_TIME, MOCK_WEEKLY } from "./fishingMock";
 import "./fishing.css";
@@ -39,19 +41,64 @@ function rankMedal(rank: number) {
   return { bg: "rgba(60,40,20,0.12)", text: "#9a7a50", shadow: "none" };
 }
 
-function TrophyCard({ entry, rank, hero = false }: { entry: Catch; rank: number; hero?: boolean }) {
+function TrophyCupIcon() {
+  return (
+    <svg viewBox="0 0 64 64" aria-hidden>
+      <path
+        fill="currentColor"
+        d="M20 14c-10 1-16 9-16 17 0 9 7 15 16 16l2.5-7.5C16 38.5 12 34 12 31c0-4 3.5-8 8-8.5V14Zm24 0c10 1 16 9 16 17 0 9-7 15-16 16l-2.5-7.5C48 38.5 52 34 52 31c0-4-3.5-8-8-8.5V14Z"
+      />
+      <path
+        fill="currentColor"
+        d="M18 6h28a2 2 0 0 1 2 2v5c-1 15-8 23-16 23S17 28 16 13V8a2 2 0 0 1 2-2Z"
+      />
+      <path fill="currentColor" d="M29 36h6v8h-6z" />
+      <ellipse cx="32" cy="45" rx="5" ry="2.2" fill="currentColor" />
+      <path fill="currentColor" d="M22 48h20l3.5 4.5H18.5L22 48Z" />
+      <rect x="14" y="52.5" width="36" height="7" rx="2" fill="currentColor" />
+    </svg>
+  );
+}
+
+function TrophyCard({
+  entry,
+  rank,
+  hero = false,
+  onOpen,
+}: {
+  entry: Catch;
+  rank: number;
+  hero?: boolean;
+  onOpen?: (species: string) => void;
+}) {
   const [hov, setHov] = useState(false);
   const med = rankMedal(rank);
   const art = fishArt[entry.fish];
+  const catchTrophy = isCatchTrophy(entry.fish, entry.weight);
 
   return (
     <div
-      className="trophy-card"
+      className={`trophy-card${hero ? " trophy-card--hero" : ""}${catchTrophy ? " trophy-card--catch-trophy" : ""}${onOpen ? " trophy-card--clickable" : ""}`}
+      role={onOpen ? "button" : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      onClick={onOpen ? () => onOpen(entry.fish) : undefined}
+      onKeyDown={
+        onOpen
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onOpen(entry.fish);
+              }
+            }
+          : undefined
+      }
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
         background: hov ? PARCHMENT_HOVER : PARCHMENT_BASE,
-        border: `1.5px solid ${rank <= 3 ? med.bg + "77" : "rgba(180,130,60,0.22)"}`,
+        border: catchTrophy
+          ? undefined
+          : `1.5px solid ${rank <= 3 ? med.bg + "77" : "rgba(180,130,60,0.22)"}`,
         borderRadius: 16,
         boxShadow: hov
           ? "0 14px 40px rgba(40,20,0,0.22), inset 0 1px 0 rgba(255,255,220,0.8)"
@@ -71,7 +118,14 @@ function TrophyCard({ entry, rank, hero = false }: { entry: Catch; rank: number;
           <img className="trophy-card-fish" src={art} alt="" draggable={false} />
         </div>
       )}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          minHeight: hero ? 48 : 36,
+        }}
+      >
         <span
           style={{
             display: "inline-flex",
@@ -90,6 +144,11 @@ function TrophyCard({ entry, rank, hero = false }: { entry: Catch; rank: number;
         >
           {rank}
         </span>
+        {catchTrophy && (
+          <div className="trophy-card-catch-badge" title="Трофейный улов" aria-label="Трофейный улов">
+            <TrophyCupIcon />
+          </div>
+        )}
       </div>
 
       <div
@@ -142,11 +201,13 @@ function Section({
   subtitle,
   catches,
   emptyHint,
+  onOpenFish,
 }: {
   title: string;
   subtitle: string;
   catches: Catch[];
   emptyHint?: string;
+  onOpenFish?: (species: string) => void;
 }) {
   const sorted = [...catches].sort((a, b) => b.weight - a.weight);
   const [hero, ...rest] = sorted;
@@ -195,12 +256,12 @@ function Section({
       ) : (
         <>
           <div style={{ marginBottom: 14 }}>
-            <TrophyCard entry={hero} rank={1} hero />
+            <TrophyCard entry={hero} rank={1} hero onOpen={onOpenFish} />
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(185px, 1fr))", gap: 12 }}>
             {rest.map((c, i) => (
-              <TrophyCard key={c.fish} entry={c} rank={i + 2} />
+              <TrophyCard key={c.fish} entry={c} rank={i + 2} onOpen={onOpenFish} />
             ))}
           </div>
         </>
@@ -566,6 +627,7 @@ export default function FishingPage() {
   const [allTime, setAllTime] = useState<Catch[]>(isMaket ? MOCK_ALL_TIME : []);
   const [loading, setLoading] = useState(!isMaket);
   const [loadError, setLoadError] = useState<FishingFetchError | null>(null);
+  const [infoSpecies, setInfoSpecies] = useState<string | null>(null);
   const loadGenRef = useRef(0);
 
   const setTab = (key: Tab) => {
@@ -701,6 +763,7 @@ export default function FishingPage() {
             subtitle="Лучший улов по каждому виду за текущую неделю"
             catches={weekly}
             emptyHint={emptyHint}
+            onOpenFish={setInfoSpecies}
           />
         )}
         {tab === "alltime" && (
@@ -709,6 +772,7 @@ export default function FishingPage() {
             subtitle="Самые тяжёлые уловы за всё время"
             catches={allTime}
             emptyHint={emptyHint}
+            onOpenFish={setInfoSpecies}
           />
         )}
         {tab === "guide" && <GuideView />}
@@ -738,6 +802,7 @@ export default function FishingPage() {
           © 2026 klon_008
         </div>
       </div>
+      {infoSpecies && <FishInfoModal species={infoSpecies} onClose={() => setInfoSpecies(null)} />}
     </div>
   );
 }
