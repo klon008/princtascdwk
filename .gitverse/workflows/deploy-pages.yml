@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    if: ${{ github.repository == 'klon_008/princtascdwk' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,6 +33,7 @@ jobs:
           path: dist
 
   deploy:
+    if: ${{ github.repository == 'klon_008/princtascdwk' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
