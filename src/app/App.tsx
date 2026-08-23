@@ -18,7 +18,8 @@ import { FilterIcon } from "./icons/FilterIcon";
 import { RefreshIcon } from "./icons/RefreshIcon";
 import { SortTriangleIcon } from "./icons/SortTriangleIcon";
 import { isSummerTheme } from "./pageTheme";
-import bgSummer from "@/imports/bg-summer.jpg";
+import { FallingLeaves } from "./FallingLeaves";
+import bgAutumnForest from "@/imports/bg-autumn-forest.webp";
 
 type SortMode = "off" | "asc" | "desc";
 
@@ -313,12 +314,12 @@ export default function App() {
   }, []);
 
   return (
-    <div className={`min-h-screen relative ${isSummerTheme ? "theme-summer bg-[#1a4a6e]" : "bg-[#030610]"}`}>
+    <div className={`min-h-screen relative ${isSummerTheme ? "theme-summer bg-[#141008]" : "bg-[#030610]"}`}>
       {isSummerTheme ? (
         <>
           <div
             className="fixed inset-0 pointer-events-none bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${bgSummer})` }}
+            style={{ backgroundImage: `url(${bgAutumnForest})` }}
             aria-hidden
           />
           <div
@@ -329,6 +330,7 @@ export default function App() {
             }}
             aria-hidden
           />
+          <FallingLeaves />
         </>
       ) : (
         <>

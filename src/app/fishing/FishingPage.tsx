@@ -13,6 +13,7 @@ import { isCatchTrophy } from "./fishSpecies";
 import { FishInfoModal } from "./FishInfoModal";
 import { FishingPixiBg } from "./FishingPixiBg";
 import { MOCK_ALL_TIME, MOCK_WEEKLY } from "./fishingMock";
+import { AutumnLeaves } from "./AutumnLeaves";
 import "./fishing.css";
 
 const commands = [
@@ -685,6 +686,7 @@ export default function FishingPage() {
       />
       <FishingPixiBg />
       <div className="fishing-bg-veil" />
+      <AutumnLeaves />
 
       <div style={{ position: "relative", zIndex: 2, maxWidth: 900, margin: "0 auto", padding: "48px 20px 80px" }}>
         <div style={{ textAlign: "center", marginBottom: 40 }}>
