@@ -86,6 +86,26 @@ import resortHoneyLemonImg from "@/imports/resort-honey-lemon.webp";
 import resortElsaImg from "@/imports/resort-elsa.webp";
 import resortChillingElsaImg from "@/imports/resort-chilling-elsa.webp";
 import resortEsmeraldaImg from "@/imports/resort-esmeralda.webp";
+import shanYuImg from "@/imports/shan_yu.webp";
+import aidImg from "@/imports/aid.webp";
+import gastonImg from "@/imports/gaston.webp";
+import gothelImg from "@/imports/gothel.webp";
+import jafarImg from "@/imports/jafar.webp";
+import evilQueenImg from "@/imports/evil_queen.webp";
+import yzmaImg from "@/imports/yzma.webp";
+import johnClaytonImg from "@/imports/john_clayton.webp";
+import captainHookImg from "@/imports/captain_hook.webp";
+import maleficentImg from "@/imports/maleficent.webp";
+import lyleTiberiusRourkeImg from "@/imports/lyle_tiberius_rourke.webp";
+import johnSilverImg from "@/imports/john_silver.webp";
+import syndromeImg from "@/imports/syndrome.webp";
+import cruellaDeVilImg from "@/imports/cruella_de_vil.webp";
+import ladyTremaineImg from "@/imports/lady_tremaine.webp";
+import ursulaImg from "@/imports/ursula.webp";
+import doctorFacilierImg from "@/imports/doctor_facilier.webp";
+import claudeFrolloImg from "@/imports/claude_frollo.webp";
+import princeHansImg from "@/imports/prince_hans.webp";
+import queenOfHeartsImg from "@/imports/queen_of_hearts.webp";
 // series-pack:generated:imports:end
 
 export interface CatalogEntry {
@@ -188,6 +208,26 @@ export const CATALOG_ORDER: string[] = [
   "resort-elsa",
   "resort-chilling-elsa",
   "resort-esmeralda",
+  "shan_yu",
+  "aid",
+  "gaston",
+  "gothel",
+  "jafar",
+  "evil_queen",
+  "yzma",
+  "john_clayton",
+  "captain_hook",
+  "maleficent",
+  "lyle_tiberius_rourke",
+  "john_silver",
+  "syndrome",
+  "cruella_de_vil",
+  "lady_tremaine",
+  "ursula",
+  "doctor_facilier",
+  "claude_frollo",
+  "prince_hans",
+  "queen_of_hearts",
 // series-pack:generated:order:end
 ];
 
@@ -279,6 +319,26 @@ const PORTRAITS: Record<string, string> = {
   "resort-elsa": resortElsaImg,
   "resort-chilling-elsa": resortChillingElsaImg,
   "resort-esmeralda": resortEsmeraldaImg,
+  "shan_yu": shanYuImg,
+  "aid": aidImg,
+  "gaston": gastonImg,
+  "gothel": gothelImg,
+  "jafar": jafarImg,
+  "evil_queen": evilQueenImg,
+  "yzma": yzmaImg,
+  "john_clayton": johnClaytonImg,
+  "captain_hook": captainHookImg,
+  "maleficent": maleficentImg,
+  "lyle_tiberius_rourke": lyleTiberiusRourkeImg,
+  "john_silver": johnSilverImg,
+  "syndrome": syndromeImg,
+  "cruella_de_vil": cruellaDeVilImg,
+  "lady_tremaine": ladyTremaineImg,
+  "ursula": ursulaImg,
+  "doctor_facilier": doctorFacilierImg,
+  "claude_frollo": claudeFrolloImg,
+  "prince_hans": princeHansImg,
+  "queen_of_hearts": queenOfHeartsImg,
 // series-pack:generated:portraits:end
 };
 
@@ -370,6 +430,26 @@ const NAMES: Record<string, string> = {
   "resort-elsa": "Пляжная Эльза",
   "resort-chilling-elsa": "Уставшая Эльза",
   "resort-esmeralda": "Пляжная Эсмеральда",
+  "shan_yu": "Шань-Ю",
+  "aid": "Аид",
+  "gaston": "Гастон",
+  "gothel": "Матушка Готель",
+  "jafar": "Джафар",
+  "evil_queen": "Злая королева",
+  "yzma": "Изма",
+  "john_clayton": "Джон Клейтон",
+  "captain_hook": "Капитан Крюк",
+  "maleficent": "Малефисента",
+  "lyle_tiberius_rourke": "Лайл Тиберий Рурк",
+  "john_silver": "Джон Сильвер",
+  "syndrome": "Бадди «Синдром» Пайн",
+  "cruella_de_vil": "Стервелла Де Виль",
+  "lady_tremaine": "Леди Тремейн",
+  "ursula": "Урсула",
+  "doctor_facilier": "Доктор Фасилье",
+  "claude_frollo": "Клод Фролло",
+  "prince_hans": "Принц Ханс",
+  "queen_of_hearts": "Червонная королева",
 // series-pack:generated:names:end
 };
 
@@ -462,6 +542,26 @@ const RARITIES: Record<string, RarityKey> = {
   "resort-elsa": "legendary",
   "resort-chilling-elsa": "mythic",
   "resort-esmeralda": "common",
+  "shan_yu": "mythic",
+  "aid": "epic",
+  "gaston": "rare",
+  "gothel": "common",
+  "jafar": "common",
+  "evil_queen": "uncommon",
+  "yzma": "rare",
+  "john_clayton": "common",
+  "captain_hook": "uncommon",
+  "maleficent": "common",
+  "lyle_tiberius_rourke": "uncommon",
+  "john_silver": "rare",
+  "syndrome": "legendary",
+  "cruella_de_vil": "legendary",
+  "lady_tremaine": "uncommon",
+  "ursula": "uncommon",
+  "doctor_facilier": "common",
+  "claude_frollo": "epic",
+  "prince_hans": "epic",
+  "queen_of_hearts": "common",
 // series-pack:generated:rarities:end
 };
 
@@ -496,6 +596,26 @@ const SERIES_OF: Record<string, string> = {
   "resort-elsa": "summer-2026",
   "resort-chilling-elsa": "summer-2026",
   "resort-esmeralda": "summer-2026",
+  "shan_yu": "villains",
+  "aid": "villains",
+  "gaston": "villains",
+  "gothel": "villains",
+  "jafar": "villains",
+  "evil_queen": "villains",
+  "yzma": "villains",
+  "john_clayton": "villains",
+  "captain_hook": "villains",
+  "maleficent": "villains",
+  "lyle_tiberius_rourke": "villains",
+  "john_silver": "villains",
+  "syndrome": "villains",
+  "cruella_de_vil": "villains",
+  "lady_tremaine": "villains",
+  "ursula": "villains",
+  "doctor_facilier": "villains",
+  "claude_frollo": "villains",
+  "prince_hans": "villains",
+  "queen_of_hearts": "villains",
 // series-pack:generated:seriesOf:end
 };
 

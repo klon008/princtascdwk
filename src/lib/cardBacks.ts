@@ -6,6 +6,7 @@ import defaultBack from "@/imports/card-back.svg";
 import classicBack from "@/imports/card-back-classic.svg";
 // series-pack:generated:back-imports:start
 import cardBackSummer2026Img from "@/imports/card-back-summer-2026.svg";
+import cardBackVillainsImg from "@/imports/card-back-villains.svg";
 // series-pack:generated:back-imports:end
 
 const CARD_BACKS: Record<string, string> = {
@@ -14,6 +15,7 @@ const CARD_BACKS: Record<string, string> = {
   // series-pack:generated:back-map:start
   
   "card-back-summer-2026": cardBackSummer2026Img,
+  "card-back-villains": cardBackVillainsImg,
 // series-pack:generated:back-map:end
 };
 

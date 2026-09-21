@@ -31,6 +31,12 @@ export const SERIES: Record<SeriesId, SeriesMeta> = {
     cardBackId: "card-back-summer-2026",
     boosterLabel: "Серия «Пляжный сезон» · Тираж № 001",
   },
+  "villains": {
+    id: "villains",
+    name: "Антигерой",
+    cardBackId: "card-back-villains",
+    boosterLabel: "Серия «Антигерой» · Тираж № 001",
+  },
 // series-pack:generated:series:end
 };
 
