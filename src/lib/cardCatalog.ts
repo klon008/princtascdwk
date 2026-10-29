@@ -106,6 +106,28 @@ import doctorFacilierImg from "@/imports/doctor_facilier.webp";
 import claudeFrolloImg from "@/imports/claude_frollo.webp";
 import princeHansImg from "@/imports/prince_hans.webp";
 import queenOfHeartsImg from "@/imports/queen_of_hearts.webp";
+import liShangHalloween2026Img from "@/imports/li_shang_halloween_2026.webp";
+import violetParrHalloween2026Img from "@/imports/violet_parr_halloween_2026.webp";
+import vanessaHalloween2026Img from "@/imports/vanessa_halloween_2026.webp";
+import beastHalloween2026Img from "@/imports/beast_halloween_2026.webp";
+import helgaSinclairHalloween2026Img from "@/imports/helga_sinclair__halloween_2026.webp";
+import rapunzelHalloween2026Img from "@/imports/rapunzel__halloween_2026.webp";
+import arielHalloween2026Img from "@/imports/ariel_halloween_2026.webp";
+import ralphHalloween2026Img from "@/imports/ralph__halloween_2026.webp";
+import sharlotteLaBouffHalloween2026Img from "@/imports/sharlotte_la_bouff_halloween_2026.webp";
+import gogoTomagoHalloween2026Img from "@/imports/gogo_tomago_halloween_2026.webp";
+import aladdinHalloween2026Img from "@/imports/aladdin_halloween_2026.webp";
+import brunoHalloween2026Img from "@/imports/bruno_halloween_2026.webp";
+import miguelHalloween2026Img from "@/imports/miguel_halloween_2026.webp";
+import olafHalloween2026Img from "@/imports/olaf_halloween_2026.webp";
+import elsaHalloween2026Img from "@/imports/elsa_halloween_2026.webp";
+import kidaHalloween2026Img from "@/imports/kida_halloween_2026.webp";
+import snowWhiteHalloween2026Img from "@/imports/snow_white_halloween_2026.webp";
+import annaHalloween2026Img from "@/imports/anna_halloween_2026.webp";
+import kronkHalloween2026Img from "@/imports/kronk_halloween_2026.webp";
+import hunchbackHalloween2026Img from "@/imports/hunchback_halloween_2026.webp";
+import mauiHalloween2026Img from "@/imports/maui_halloween_2026.webp";
+import filHalloween2026Img from "@/imports/fil_halloween_2026.webp";
 // series-pack:generated:imports:end
 
 export interface CatalogEntry {
@@ -228,6 +250,28 @@ export const CATALOG_ORDER: string[] = [
   "claude_frollo",
   "prince_hans",
   "queen_of_hearts",
+  "li_shang_halloween_2026",
+  "violet_parr_halloween_2026",
+  "vanessa_halloween_2026",
+  "beast_halloween_2026",
+  "helga_sinclair__halloween_2026",
+  "rapunzel__halloween_2026",
+  "ariel_halloween_2026",
+  "ralph__halloween_2026",
+  "sharlotte_la_bouff_halloween_2026",
+  "gogo_tomago_halloween_2026",
+  "aladdin_halloween_2026",
+  "bruno_halloween_2026",
+  "miguel_halloween_2026",
+  "olaf_halloween_2026",
+  "elsa_halloween_2026",
+  "kida_halloween_2026",
+  "snow_white_halloween_2026",
+  "anna_halloween_2026",
+  "kronk_halloween_2026",
+  "hunchback_halloween_2026",
+  "maui_halloween_2026",
+  "fil_halloween_2026",
 // series-pack:generated:order:end
 ];
 
@@ -339,6 +383,28 @@ const PORTRAITS: Record<string, string> = {
   "claude_frollo": claudeFrolloImg,
   "prince_hans": princeHansImg,
   "queen_of_hearts": queenOfHeartsImg,
+  "li_shang_halloween_2026": liShangHalloween2026Img,
+  "violet_parr_halloween_2026": violetParrHalloween2026Img,
+  "vanessa_halloween_2026": vanessaHalloween2026Img,
+  "beast_halloween_2026": beastHalloween2026Img,
+  "helga_sinclair__halloween_2026": helgaSinclairHalloween2026Img,
+  "rapunzel__halloween_2026": rapunzelHalloween2026Img,
+  "ariel_halloween_2026": arielHalloween2026Img,
+  "ralph__halloween_2026": ralphHalloween2026Img,
+  "sharlotte_la_bouff_halloween_2026": sharlotteLaBouffHalloween2026Img,
+  "gogo_tomago_halloween_2026": gogoTomagoHalloween2026Img,
+  "aladdin_halloween_2026": aladdinHalloween2026Img,
+  "bruno_halloween_2026": brunoHalloween2026Img,
+  "miguel_halloween_2026": miguelHalloween2026Img,
+  "olaf_halloween_2026": olafHalloween2026Img,
+  "elsa_halloween_2026": elsaHalloween2026Img,
+  "kida_halloween_2026": kidaHalloween2026Img,
+  "snow_white_halloween_2026": snowWhiteHalloween2026Img,
+  "anna_halloween_2026": annaHalloween2026Img,
+  "kronk_halloween_2026": kronkHalloween2026Img,
+  "hunchback_halloween_2026": hunchbackHalloween2026Img,
+  "maui_halloween_2026": mauiHalloween2026Img,
+  "fil_halloween_2026": filHalloween2026Img,
 // series-pack:generated:portraits:end
 };
 
@@ -450,6 +516,28 @@ const NAMES: Record<string, string> = {
   "claude_frollo": "Клод Фролло",
   "prince_hans": "Принц Ханс",
   "queen_of_hearts": "Червонная королева",
+  "li_shang_halloween_2026": "Жуткий Ли Шанг",
+  "violet_parr_halloween_2026": "Жуткая Виолетта Парр",
+  "vanessa_halloween_2026": "Жуткая Ванесса (Урсула)",
+  "beast_halloween_2026": "Жуткое Чудовище",
+  "helga_sinclair__halloween_2026": "Жуткая Хельга Синклер",
+  "rapunzel__halloween_2026": "Жуткая Рапунцель",
+  "ariel_halloween_2026": "Жуткая Ариэль",
+  "ralph__halloween_2026": "Жуткий Ральф",
+  "sharlotte_la_bouff_halloween_2026": "Жуткая Шарлотта Ла Бафф",
+  "gogo_tomago_halloween_2026": "Жуткая Гого Томаго",
+  "aladdin_halloween_2026": "Жуткий Аладдин",
+  "bruno_halloween_2026": "Жуткий Бруно",
+  "miguel_halloween_2026": "Жуткий Мигель",
+  "olaf_halloween_2026": "Жуткий Олаф",
+  "elsa_halloween_2026": "Жуткая Эльза",
+  "kida_halloween_2026": "Жуткая Кида",
+  "snow_white_halloween_2026": "Жуткая Белоснежка",
+  "anna_halloween_2026": "Жуткая Анна",
+  "kronk_halloween_2026": "Жуткий Кронк",
+  "hunchback_halloween_2026": "Жуткий Горбун",
+  "maui_halloween_2026": "Жуткий Мауи",
+  "fil_halloween_2026": "Жуткий Фил",
 // series-pack:generated:names:end
 };
 
@@ -562,6 +650,28 @@ const RARITIES: Record<string, RarityKey> = {
   "claude_frollo": "epic",
   "prince_hans": "epic",
   "queen_of_hearts": "common",
+  "li_shang_halloween_2026": "rare",
+  "violet_parr_halloween_2026": "common",
+  "vanessa_halloween_2026": "uncommon",
+  "beast_halloween_2026": "uncommon",
+  "helga_sinclair__halloween_2026": "common",
+  "rapunzel__halloween_2026": "rare",
+  "ariel_halloween_2026": "epic",
+  "ralph__halloween_2026": "uncommon",
+  "sharlotte_la_bouff_halloween_2026": "epic",
+  "gogo_tomago_halloween_2026": "rare",
+  "aladdin_halloween_2026": "common",
+  "bruno_halloween_2026": "common",
+  "miguel_halloween_2026": "uncommon",
+  "olaf_halloween_2026": "rare",
+  "elsa_halloween_2026": "legendary",
+  "kida_halloween_2026": "epic",
+  "snow_white_halloween_2026": "mythic",
+  "anna_halloween_2026": "legendary",
+  "kronk_halloween_2026": "common",
+  "hunchback_halloween_2026": "uncommon",
+  "maui_halloween_2026": "common",
+  "fil_halloween_2026": "uncommon",
 // series-pack:generated:rarities:end
 };
 
@@ -616,6 +726,28 @@ const SERIES_OF: Record<string, string> = {
   "claude_frollo": "villains",
   "prince_hans": "villains",
   "queen_of_hearts": "villains",
+  "li_shang_halloween_2026": "halloween_2026",
+  "violet_parr_halloween_2026": "halloween_2026",
+  "vanessa_halloween_2026": "halloween_2026",
+  "beast_halloween_2026": "halloween_2026",
+  "helga_sinclair__halloween_2026": "halloween_2026",
+  "rapunzel__halloween_2026": "halloween_2026",
+  "ariel_halloween_2026": "halloween_2026",
+  "ralph__halloween_2026": "halloween_2026",
+  "sharlotte_la_bouff_halloween_2026": "halloween_2026",
+  "gogo_tomago_halloween_2026": "halloween_2026",
+  "aladdin_halloween_2026": "halloween_2026",
+  "bruno_halloween_2026": "halloween_2026",
+  "miguel_halloween_2026": "halloween_2026",
+  "olaf_halloween_2026": "halloween_2026",
+  "elsa_halloween_2026": "halloween_2026",
+  "kida_halloween_2026": "halloween_2026",
+  "snow_white_halloween_2026": "halloween_2026",
+  "anna_halloween_2026": "halloween_2026",
+  "kronk_halloween_2026": "halloween_2026",
+  "hunchback_halloween_2026": "halloween_2026",
+  "maui_halloween_2026": "halloween_2026",
+  "fil_halloween_2026": "halloween_2026",
 // series-pack:generated:seriesOf:end
 };
 

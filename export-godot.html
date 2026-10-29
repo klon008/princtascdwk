@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Godot export stage</title>
+  <link rel="icon" href="data:," />
+  <!-- Same webfonts as the app (index.html); only PT Serif Caption is used on the card itself. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif+Caption:ital,wght@0,400;0,700&display=swap" />
+  <style>
+    html, body { margin: 0; padding: 0; background: transparent; }
+    /* Wide viewport (set by the export script) keeps .card-princess-name clamp() at its desktop values. */
+    #stage { position: fixed; left: 24px; top: 24px; width: 350px; height: 490px; }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+  <script type="module" src="/src/dev/exportGodotPage.tsx"></script>
+</body>
+</html>

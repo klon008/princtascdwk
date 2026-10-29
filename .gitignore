@@ -56,3 +56,6 @@ src/assets/fishing/fish/_backup_white_bg/
 
 # Local card SVG/HTML export (not published yet)
 card-templates/
+
+# Generated Godot assets (node scripts/export-godot-assets.mjs)
+godot-export/

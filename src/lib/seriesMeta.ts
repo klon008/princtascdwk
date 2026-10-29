@@ -37,6 +37,12 @@ export const SERIES: Record<SeriesId, SeriesMeta> = {
     cardBackId: "card-back-villains",
     boosterLabel: "Серия «Антигерой» · Тираж № 001",
   },
+  "halloween_2026": {
+    id: "halloween_2026",
+    name: "Жуткий и пугающий",
+    cardBackId: "card-back-halloween_2026",
+    boosterLabel: "Серия «Жуткий и пугающий» · Тираж № 001",
+  },
 // series-pack:generated:series:end
 };
 
